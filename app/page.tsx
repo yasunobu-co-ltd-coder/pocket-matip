@@ -135,7 +135,7 @@ export default function Page() {
       </div>
 
       {/* Main Content */}
-      <div className="main-content" style={{ marginTop: '-24px' }}>
+      <div className="main-content">
         {/* Home Tab */}
         <div className={`tab-panel ${activeTab === 'home' ? 'active' : ''}`}>
           <HomeTab

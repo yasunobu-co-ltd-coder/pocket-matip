@@ -42,7 +42,7 @@ body {
 /* Header */
 .header {
   background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-  padding: 24px 20px 60px;
+  padding: 24px 20px 24px;
   position: relative;
   overflow: hidden;
 }
