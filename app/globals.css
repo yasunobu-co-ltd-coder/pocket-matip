@@ -775,11 +775,13 @@ audio {
   border-radius: 16px;
   padding: 20px;
   display: flex;
+  flex-direction: row;
   align-items: center;
   gap: 16px;
   border: 1px solid var(--border-color);
   cursor: pointer;
   transition: all 0.3s;
+  position: relative;
 }
 
 .action-card:hover {
@@ -790,10 +792,17 @@ audio {
 .action-card-icon {
   font-size: 36px;
   flex-shrink: 0;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: static;
 }
 
 .action-card-content {
   flex: 1;
+  min-width: 0;
 }
 
 .action-card-title {
@@ -811,4 +820,5 @@ audio {
   font-size: 20px;
   color: var(--text-muted);
   flex-shrink: 0;
+  position: static;
 }
