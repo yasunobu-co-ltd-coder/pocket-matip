@@ -761,3 +761,54 @@ audio {
   border-radius: 10px;
   margin-left: 8px;
 }
+
+/* Action Cards - Vertical Layout */
+.action-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.action-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.action-card:hover {
+  border-color: var(--accent-primary);
+  transform: translateX(4px);
+}
+
+.action-card-icon {
+  font-size: 36px;
+  flex-shrink: 0;
+}
+
+.action-card-content {
+  flex: 1;
+}
+
+.action-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.action-card-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.action-card-arrow {
+  font-size: 20px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}

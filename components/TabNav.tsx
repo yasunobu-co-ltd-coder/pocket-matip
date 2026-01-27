@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-type TabId = 'home' | 'record' | 'tasks' | 'search';
+type TabId = 'home' | 'record' | 'search';
 
 type TabNavProps = {
   activeTab: TabId;
@@ -11,9 +11,6 @@ type TabNavProps = {
 
 const tabs: { id: TabId; icon: string; label: string }[] = [
   { id: 'home', icon: '🏠', label: 'ホーム' },
-  { id: 'record', icon: '🎙️', label: '録音' },
-  { id: 'tasks', icon: '✅', label: 'タスク' },
-  { id: 'search', icon: '🔍', label: '検索' },
 ];
 
 export default function TabNav({ activeTab, onTabChange }: TabNavProps) {
