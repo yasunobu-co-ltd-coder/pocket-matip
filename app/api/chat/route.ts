@@ -3,12 +3,12 @@ import OpenAI from 'openai';
 
 export const runtime = 'nodejs';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function POST(req: NextRequest) {
   try {
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
     const body = await req.json();
     const { model, messages, response_format } = body;
 

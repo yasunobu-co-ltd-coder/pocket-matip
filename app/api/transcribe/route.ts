@@ -7,12 +7,12 @@ import { writeFile } from 'fs/promises';
 
 export const runtime = 'nodejs';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function POST(req: NextRequest) {
   try {
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
     const formData = await req.formData();
     const file = formData.get('file') as File;
     const model = formData.get('model') as string || 'whisper-1';
