@@ -2,6 +2,9 @@
  * Audio utility functions for splitting large files
  */
 
+// Whisper API has a 25MB file size limit
+const WHISPER_MAX_SIZE = 25 * 1024 * 1024; // 25MB
+
 // Vercel serverless function body limit is 4.5MB
 // WAV file size calculation:
 // WAV size = (sample_rate * bit_depth/8 * channels * duration) + 44 bytes header
