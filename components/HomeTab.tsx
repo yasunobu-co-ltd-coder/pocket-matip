@@ -89,7 +89,7 @@ export default function HomeTab({
                 onClick={() => onViewRecord(record.id)}
               >
                 <div className="history-header">
-                  <span className="history-customer">{record.customer || record.project || '名称なし'}</span>
+                  <span className="history-customer">{record.project || record.customer || '名称なし'}</span>
                   <span className="history-date">{formatDate(record.createdAt)}</span>
                 </div>
                 <div className="history-summary">
