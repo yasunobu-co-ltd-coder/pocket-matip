@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useCallback } from 'react';
+import { needsSplitting, splitAudioFile, combineTranscriptions, formatFileSize } from '@/lib/audio-utils';
 
 type RecordTabProps = {
   onSaveRecord: (
@@ -176,26 +177,61 @@ export default function RecordTab({ onSaveRecord, onBackToHome }: RecordTabProps
     }
   };
 
+  // Transcribe a single audio chunk
+  const transcribeChunk = async (blob: Blob, filename: string): Promise<string> => {
+    const formData = new FormData();
+    formData.append('file', blob, filename);
+    formData.append('model', 'whisper-1');
+    formData.append('language', 'ja');
+
+    const resp = await fetch('/api/transcribe', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!resp.ok) {
+      const errorData = await resp.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Whisper API Error');
+    }
+
+    const data = await resp.json();
+    return data.text;
+  };
+
   // Process audio with AI
   const processAudio = async (audioBlob: Blob) => {
     setIsProcessing(true);
-    setProcessingText('音声を文字に変換中...');
+    setProcessingText('音声ファイルを確認中...');
 
     try {
-      // 1. Whisper API transcription
-      const formData = new FormData();
-      formData.append('file', audioBlob, 'recording.webm');
-      formData.append('model', 'whisper-1');
-      formData.append('language', 'ja');
+      let transcript: string;
 
-      const whisperResp = await fetch('/api/transcribe', {
-        method: 'POST',
-        body: formData,
-      });
+      // Check if file needs splitting (> 25MB)
+      if (needsSplitting(audioBlob)) {
+        setProcessingText(`大きなファイル (${formatFileSize(audioBlob.size)}) を分割中...`);
 
-      if (!whisperResp.ok) throw new Error('Whisper API Error');
-      const whisperData = await whisperResp.json();
-      const transcript = whisperData.text;
+        // Split the audio file
+        const chunks = await splitAudioFile(audioBlob as File, (progress, message) => {
+          setProcessingText(message);
+        });
+
+        setProcessingText(`${chunks.length}個のチャンクを文字起こし中...`);
+
+        // Transcribe each chunk
+        const transcriptions: string[] = [];
+        for (let i = 0; i < chunks.length; i++) {
+          setProcessingText(`チャンク ${i + 1}/${chunks.length} を文字起こし中...`);
+          const chunkTranscript = await transcribeChunk(chunks[i].blob, `chunk_${i}.wav`);
+          transcriptions.push(chunkTranscript);
+        }
+
+        // Combine transcriptions
+        transcript = combineTranscriptions(transcriptions);
+      } else {
+        // Normal processing for small files
+        setProcessingText('音声を文字に変換中...');
+        transcript = await transcribeChunk(audioBlob, 'recording.webm');
+      }
 
       console.log('Transcript:', transcript);
 
@@ -447,7 +483,7 @@ JSONのフォーマットは以下に従ってください（必ず有効なJSON
           />
 
           <div className="audio-formats-hint">
-            対応形式: MP3, M4A, WAV, WebM（最大1GB）
+            対応形式: MP3, M4A, WAV, WebM（最大1GB・大容量ファイルは自動分割）
           </div>
 
           {isRecording && !isPaused && (
