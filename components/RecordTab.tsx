@@ -315,7 +315,32 @@ JSONのフォーマットは以下に従ってください（必ず有効なJSON
 
       if (!gptResp.ok) throw new Error('GPT API Error');
       const gptData = await gptResp.json();
-      const result: MinutesData = JSON.parse(gptData.choices[0].message.content);
+      const rawResult = JSON.parse(gptData.choices[0].message.content);
+
+      // Normalize GPT response - convert any objects to strings
+      const normalizeArray = (arr: unknown[] | undefined): string[] => {
+        if (!arr) return [];
+        return arr.map(item => {
+          if (typeof item === 'string') return item;
+          if (typeof item === 'object' && item !== null) {
+            const obj = item as Record<string, unknown>;
+            if ('text' in obj) return String(obj.text);
+            if ('content' in obj) return String(obj.content);
+            if ('task' in obj) return String(obj.task);
+            if ('item' in obj) return String(obj.item);
+            if ('description' in obj) return String(obj.description);
+            return Object.values(obj).filter(v => typeof v === 'string').join(' - ') || JSON.stringify(obj);
+          }
+          return String(item);
+        });
+      };
+
+      const result: MinutesData = {
+        ...rawResult,
+        decisions: normalizeArray(rawResult.decisions),
+        todos: normalizeArray(rawResult.todos),
+        keywords: normalizeArray(rawResult.keywords),
+      };
 
       // Auto-fill form
       if (result.customer) setCustomerName(result.customer);
@@ -352,6 +377,23 @@ JSONのフォーマットは以下に従ってください（必ず有効なJSON
     setUploadedImages((prev) => prev.filter((_, i) => i !== index));
   };
 
+  // Helper to convert item to string (handles objects from GPT)
+  const itemToString = (item: unknown): string => {
+    if (typeof item === 'string') return item;
+    if (typeof item === 'object' && item !== null) {
+      // Handle common GPT response formats
+      const obj = item as Record<string, unknown>;
+      if ('text' in obj) return String(obj.text);
+      if ('content' in obj) return String(obj.content);
+      if ('task' in obj) return String(obj.task);
+      if ('item' in obj) return String(obj.item);
+      if ('description' in obj) return String(obj.description);
+      // Fallback: try to create readable string
+      return Object.values(obj).filter(v => typeof v === 'string').join(' - ') || JSON.stringify(obj);
+    }
+    return String(item);
+  };
+
   // Generate minutes HTML
   const generateMinutesHtml = (data: MinutesData): string => {
     const now = new Date();
@@ -359,17 +401,17 @@ JSONのフォーマットは以下に従ってください（必ず有効なJSON
 
     const decisionsHtml =
       data.decisions && data.decisions.length > 0
-        ? data.decisions.map((d) => `<li>${d}</li>`).join('')
+        ? data.decisions.map((d) => `<li>${itemToString(d)}</li>`).join('')
         : '<li>（特になし）</li>';
 
     const todosHtml =
       data.todos && data.todos.length > 0
-        ? data.todos.map((t) => `<li>${t}</li>`).join('')
+        ? data.todos.map((t) => `<li>${itemToString(t)}</li>`).join('')
         : '<li>（特になし）</li>';
 
     const keywordsHtml =
       data.keywords && data.keywords.length > 0
-        ? data.keywords.map((k) => `<span class="tag">${k}</span>`).join('')
+        ? data.keywords.map((k) => `<span class="tag">${itemToString(k)}</span>`).join('')
         : '';
 
     const nextScheduleHtml = data.nextSchedule
@@ -754,12 +796,6 @@ JSONのフォーマットは以下に従ってください（必ず有効なJSON
           )}
 
           <div className="record-controls" style={{ marginTop: '16px' }}>
-            <button className="btn btn-secondary" onClick={() => alert('編集機能は開発中です')}>
-              ✏️ 編集
-            </button>
-            <button className="btn btn-success" onClick={() => alert('共有機能は開発中です')}>
-              📤 共有
-            </button>
             <button className="btn btn-primary" onClick={saveAndNew}>
               ✅ 保存
             </button>
