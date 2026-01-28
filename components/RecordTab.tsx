@@ -42,6 +42,7 @@ export default function RecordTab({ onSaveRecord, onBackToHome }: RecordTabProps
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingText, setProcessingText] = useState('');
   const [minutesData, setMinutesData] = useState<MinutesData | null>(null);
+  const [isEditingMinutes, setIsEditingMinutes] = useState(false);
 
   // Image state
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
@@ -618,14 +619,140 @@ JSONのフォーマットは以下に従ってください（必ず有効なJSON
       {/* Minutes Card */}
       {minutesData && !isProcessing && (
         <div className="card">
-          <div className="card-title">
-            <span>📝</span>
-            AI生成議事録
+          <div className="card-title" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>
+              <span>📝</span>
+              AI生成議事録
+            </span>
+            <button
+              className="btn btn-secondary"
+              style={{ padding: '4px 12px', fontSize: '12px' }}
+              onClick={() => setIsEditingMinutes(!isEditingMinutes)}
+            >
+              {isEditingMinutes ? '✓ 完了' : '✏️ 編集'}
+            </button>
           </div>
-          <div
-            className="minutes-section"
-            dangerouslySetInnerHTML={{ __html: generateMinutesHtml(minutesData) }}
-          />
+
+          {isEditingMinutes ? (
+            <div className="minutes-edit-section">
+              {/* Summary Edit */}
+              <div className="form-group">
+                <label className="form-label">💡 要約</label>
+                <textarea
+                  className="form-input"
+                  rows={4}
+                  value={minutesData.summary || ''}
+                  onChange={(e) => setMinutesData({ ...minutesData, summary: e.target.value })}
+                  placeholder="商談の要約を入力..."
+                />
+              </div>
+
+              {/* Decisions Edit */}
+              <div className="form-group">
+                <label className="form-label">✅ 決定事項</label>
+                {(minutesData.decisions || []).map((decision, idx) => (
+                  <div key={idx} style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={decision}
+                      onChange={(e) => {
+                        const newDecisions = [...(minutesData.decisions || [])];
+                        newDecisions[idx] = e.target.value;
+                        setMinutesData({ ...minutesData, decisions: newDecisions });
+                      }}
+                    />
+                    <button
+                      className="btn btn-danger"
+                      style={{ padding: '8px 12px' }}
+                      onClick={() => {
+                        const newDecisions = (minutesData.decisions || []).filter((_, i) => i !== idx);
+                        setMinutesData({ ...minutesData, decisions: newDecisions });
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+                <button
+                  className="btn btn-secondary"
+                  style={{ padding: '4px 12px', fontSize: '12px' }}
+                  onClick={() => setMinutesData({ ...minutesData, decisions: [...(minutesData.decisions || []), ''] })}
+                >
+                  + 追加
+                </button>
+              </div>
+
+              {/* Todos Edit */}
+              <div className="form-group">
+                <label className="form-label">📝 宿題・TODO</label>
+                {(minutesData.todos || []).map((todo, idx) => (
+                  <div key={idx} style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={todo}
+                      onChange={(e) => {
+                        const newTodos = [...(minutesData.todos || [])];
+                        newTodos[idx] = e.target.value;
+                        setMinutesData({ ...minutesData, todos: newTodos });
+                      }}
+                    />
+                    <button
+                      className="btn btn-danger"
+                      style={{ padding: '8px 12px' }}
+                      onClick={() => {
+                        const newTodos = (minutesData.todos || []).filter((_, i) => i !== idx);
+                        setMinutesData({ ...minutesData, todos: newTodos });
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+                <button
+                  className="btn btn-secondary"
+                  style={{ padding: '4px 12px', fontSize: '12px' }}
+                  onClick={() => setMinutesData({ ...minutesData, todos: [...(minutesData.todos || []), ''] })}
+                >
+                  + 追加
+                </button>
+              </div>
+
+              {/* Keywords Edit */}
+              <div className="form-group">
+                <label className="form-label">🏷️ キーワード</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={(minutesData.keywords || []).join(', ')}
+                  onChange={(e) => {
+                    const keywords = e.target.value.split(',').map(k => k.trim()).filter(k => k);
+                    setMinutesData({ ...minutesData, keywords });
+                  }}
+                  placeholder="カンマ区切りで入力（例: 見積, 納期, 仕様変更）"
+                />
+              </div>
+
+              {/* Next Schedule Edit */}
+              <div className="form-group">
+                <label className="form-label">📅 次回予定</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={minutesData.nextSchedule || ''}
+                  onChange={(e) => setMinutesData({ ...minutesData, nextSchedule: e.target.value })}
+                  placeholder="例: 来週水曜 14時 現場確認"
+                />
+              </div>
+            </div>
+          ) : (
+            <div
+              className="minutes-section"
+              dangerouslySetInnerHTML={{ __html: generateMinutesHtml(minutesData) }}
+            />
+          )}
+
           <div className="record-controls" style={{ marginTop: '16px' }}>
             <button className="btn btn-secondary" onClick={() => alert('編集機能は開発中です')}>
               ✏️ 編集
