@@ -217,15 +217,31 @@ export default function RecordTab({ onSaveRecord, onBackToHome }: RecordTabProps
 
         setProcessingText(`${chunks.length}個のチャンクを文字起こし中...`);
 
-        // Transcribe each chunk
-        const transcriptions: string[] = [];
-        for (let i = 0; i < chunks.length; i++) {
-          setProcessingText(`チャンク ${i + 1}/${chunks.length} を文字起こし中...`);
-          const chunkTranscript = await transcribeChunk(chunks[i].blob, `chunk_${i}.wav`);
-          transcriptions.push(chunkTranscript);
+        // Transcribe chunks in parallel batches for speed
+        const BATCH_SIZE = 10; // Process 10 chunks at a time
+        const transcriptions: string[] = new Array(chunks.length).fill('');
+        let completedCount = 0;
+
+        for (let batchStart = 0; batchStart < chunks.length; batchStart += BATCH_SIZE) {
+          const batchEnd = Math.min(batchStart + BATCH_SIZE, chunks.length);
+          const batch = chunks.slice(batchStart, batchEnd);
+
+          setProcessingText(`文字起こし中... ${completedCount}/${chunks.length} 完了`);
+
+          // Process batch in parallel
+          const batchPromises = batch.map(async (chunk, batchIndex) => {
+            const globalIndex = batchStart + batchIndex;
+            const result = await transcribeChunk(chunk.blob, `chunk_${globalIndex}.wav`);
+            transcriptions[globalIndex] = result;
+            completedCount++;
+            setProcessingText(`文字起こし中... ${completedCount}/${chunks.length} 完了`);
+            return result;
+          });
+
+          await Promise.all(batchPromises);
         }
 
-        // Combine transcriptions
+        // Combine transcriptions in order
         transcript = combineTranscriptions(transcriptions);
       } else {
         // Normal processing for small files
