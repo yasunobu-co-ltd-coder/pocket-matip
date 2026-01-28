@@ -238,18 +238,47 @@ export default function RecordTab({ onSaveRecord, onBackToHome }: RecordTabProps
       // 2. GPT-4o-mini for minutes generation
       setProcessingText('AIが議事録を作成中...');
 
+      // Determine summary detail level based on transcript length
+      const transcriptLength = transcript.length;
+      let summaryInstruction: string;
+      let decisionsInstruction: string;
+      let todosInstruction: string;
+
+      if (transcriptLength < 500) {
+        // Short meeting (< 500 chars, ~1-2 min)
+        summaryInstruction = '商談の要約（1-2文程度の簡潔な要約）';
+        decisionsInstruction = '決定事項（1-2項目）';
+        todosInstruction = 'タスク（1-2項目）';
+      } else if (transcriptLength < 2000) {
+        // Medium meeting (500-2000 chars, ~3-10 min)
+        summaryInstruction = '商談の要約（3-5文程度）';
+        decisionsInstruction = '決定事項（2-4項目）';
+        todosInstruction = 'タスク（2-4項目）';
+      } else if (transcriptLength < 5000) {
+        // Long meeting (2000-5000 chars, ~10-30 min)
+        summaryInstruction = '商談の要約（5-8文程度、主要なポイントを網羅）';
+        decisionsInstruction = '決定事項（3-6項目、詳細に記載）';
+        todosInstruction = 'タスク（3-6項目、担当者や期限があれば含める）';
+      } else {
+        // Very long meeting (> 5000 chars, 30+ min)
+        summaryInstruction = '商談の要約（10文以上の詳細な要約、議論の流れや背景も含める）';
+        decisionsInstruction = '決定事項（重要度順に5-10項目、背景や理由も簡潔に記載）';
+        todosInstruction = 'タスク（優先度順に5-10項目、担当者・期限・詳細を含める）';
+      }
+
       const systemPrompt = `
 あなたはプロの営業アシスタントです。以下の商談の文字起こしテキストから、情報を抽出してJSON形式で出力してください。
+文字起こしの長さは${transcriptLength}文字です。この長さに見合った詳細度で要約してください。
 JSONのフォーマットは以下に従ってください（必ず有効なJSONのみを返してください）。
 
 {
   "customer": "顧客名（不明な場合は空文字）",
   "contact": "担当者名（不明な場合は空文字）",
   "project": "案件名（推測できる場合）",
-  "summary": "商談の要約（3行程度）",
-  "decisions": ["決定事項1", "決定事項2"],
-  "todos": ["タスク1", "タスク2"],
-  "keywords": ["キーワード1", "キーワード2"],
+  "summary": "${summaryInstruction}",
+  "decisions": [${decisionsInstruction}],
+  "todos": [${todosInstruction}],
+  "keywords": ["キーワード1", "キーワード2", "キーワード3"],
   "nextSchedule": "次回予定（日時など）"
 }
 `;
