@@ -4,7 +4,7 @@
 
 // Configuration
 export const IMAGE_CONFIG = {
-  maxSizeBytes: 5 * 1024 * 1024, // 5MB
+  maxSizeBytes: 10 * 1024 * 1024, // 10MB
   maxDimension: 1280, // Max width or height in pixels
   quality: 0.85, // JPEG quality (0-1)
   allowedTypes: ['image/jpeg', 'image/png', 'image/heic', 'image/heif', 'image/webp'],
