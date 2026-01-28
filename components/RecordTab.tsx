@@ -155,9 +155,9 @@ export default function RecordTab({ onSaveRecord, onBackToHome }: RecordTabProps
       return;
     }
 
-    // Check file size (max 25MB for Whisper API)
-    if (file.size > 25 * 1024 * 1024) {
-      alert('ファイルサイズが大きすぎます。最大25MBまで対応しています。');
+    // Check file size (max 1GB)
+    if (file.size > 1024 * 1024 * 1024) {
+      alert('ファイルサイズが大きすぎます。最大1GBまで対応しています。');
       return;
     }
 
@@ -447,7 +447,7 @@ JSONのフォーマットは以下に従ってください（必ず有効なJSON
           />
 
           <div className="audio-formats-hint">
-            対応形式: MP3, M4A, WAV, WebM（最大25MB）
+            対応形式: MP3, M4A, WAV, WebM（最大1GB）
           </div>
 
           {isRecording && !isPaused && (
