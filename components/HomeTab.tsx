@@ -3,13 +3,12 @@
 import React from 'react';
 import { Record } from '@/lib/records';
 
-type TabId = 'home' | 'record' | 'search';
+type TabId = 'home' | 'record' | 'search' | 'photo' | 'gallery';
 
 type HomeTabProps = {
   records: Record[];
   loading: boolean;
   onSwitchTab: (tabId: TabId) => void;
-  onOpenPhotoCapture: () => void;
   onViewRecord: (id: string) => void;
 };
 
@@ -22,7 +21,6 @@ export default function HomeTab({
   records,
   loading,
   onSwitchTab,
-  onOpenPhotoCapture,
   onViewRecord,
 }: HomeTabProps) {
   const recentRecords = records.slice(0, 5);
@@ -40,11 +38,20 @@ export default function HomeTab({
           <div className="action-card-arrow">→</div>
         </div>
 
-        <div className="action-card" onClick={onOpenPhotoCapture}>
+        <div className="action-card" onClick={() => onSwitchTab('photo')}>
           <div className="action-card-icon">📷</div>
           <div className="action-card-content">
-            <div className="action-card-title">写真撮影</div>
-            <div className="action-card-desc">現場写真を撮影して記録に追加</div>
+            <div className="action-card-title">現場写真撮影</div>
+            <div className="action-card-desc">現場写真をアップロード・管理</div>
+          </div>
+          <div className="action-card-arrow">→</div>
+        </div>
+
+        <div className="action-card" onClick={() => onSwitchTab('gallery')}>
+          <div className="action-card-icon">🖼️</div>
+          <div className="action-card-content">
+            <div className="action-card-title">写真一覧</div>
+            <div className="action-card-desc">アップロードした写真の閲覧・CSV出力</div>
           </div>
           <div className="action-card-arrow">→</div>
         </div>

@@ -7,8 +7,10 @@ import RecordTab from '@/components/RecordTab';
 import SearchTab from '@/components/SearchTab';
 import QuickMemoModal from '@/components/QuickMemoModal';
 import RecordDetailModal from '@/components/RecordDetailModal';
+import PhotoUpload from '@/components/PhotoUpload';
+import PhotoGallery from '@/components/PhotoGallery';
 
-type TabId = 'home' | 'record' | 'search';
+type TabId = 'home' | 'record' | 'search' | 'photo' | 'gallery';
 
 export default function Page() {
   // Tab State
@@ -57,16 +59,6 @@ export default function Page() {
       return true;
     }
     return false;
-  };
-
-  // Photo capture handler
-  const openPhotoCapture = () => {
-    switchTab('record');
-    // Trigger image input after tab switch
-    setTimeout(() => {
-      const imageInput = document.getElementById('imageInput') as HTMLInputElement;
-      if (imageInput) imageInput.click();
-    }, 300);
   };
 
   // Record detail handlers
@@ -130,7 +122,7 @@ export default function Page() {
       {/* Header */}
       <div className="header">
         <div className="header-content">
-          <div className="version-badge">ver0.2</div>
+          <div className="version-badge">ver0.3</div>
           <div className="logo">
             <div className="logo-icon">📱</div>
             <h1>Pocket Matip</h1>
@@ -151,10 +143,16 @@ export default function Page() {
               🎤 録音
             </button>
             <button
-              className={`header-nav-btn`}
-              onClick={openPhotoCapture}
+              className={`header-nav-btn ${activeTab === 'photo' ? 'active' : ''}`}
+              onClick={() => switchTab('photo')}
             >
-              📷 写真
+              📷 撮影
+            </button>
+            <button
+              className={`header-nav-btn ${activeTab === 'gallery' ? 'active' : ''}`}
+              onClick={() => switchTab('gallery')}
+            >
+              🖼️ 写真一覧
             </button>
             <button
               className={`header-nav-btn ${activeTab === 'search' ? 'active' : ''}`}
@@ -174,7 +172,6 @@ export default function Page() {
             records={records}
             loading={loading}
             onSwitchTab={switchTab}
-            onOpenPhotoCapture={openPhotoCapture}
             onViewRecord={viewRecord}
           />
         </div>
@@ -194,6 +191,19 @@ export default function Page() {
             onViewRecord={viewRecord}
             onBackToHome={() => switchTab('home')}
           />
+        </div>
+
+        {/* Photo Upload Tab */}
+        <div className={`tab-panel ${activeTab === 'photo' ? 'active' : ''}`}>
+          <PhotoUpload
+            onUploadComplete={() => switchTab('gallery')}
+            onBackToHome={() => switchTab('home')}
+          />
+        </div>
+
+        {/* Photo Gallery Tab */}
+        <div className={`tab-panel ${activeTab === 'gallery' ? 'active' : ''}`}>
+          <PhotoGallery onBackToHome={() => switchTab('home')} />
         </div>
       </div>
 
