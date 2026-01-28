@@ -5,8 +5,11 @@
 // Whisper API limit
 const WHISPER_MAX_SIZE = 25 * 1024 * 1024; // 25MB
 
-// Target chunk size (slightly less than limit for safety)
-const CHUNK_TARGET_SIZE = 20 * 1024 * 1024; // 20MB
+// WAV file size calculation:
+// WAV size = (sample_rate * bit_depth/8 * channels * duration) + 44 bytes header
+// For 16bit stereo 44.1kHz: ~10MB per minute
+// Target: 20MB = ~2 minutes per chunk (with safety margin)
+const MAX_CHUNK_DURATION_SECONDS = 120; // 2 minutes max per chunk for WAV safety
 
 export type AudioChunk = {
   blob: Blob;
@@ -52,15 +55,18 @@ export async function splitAudioFile(
   const sampleRate = audioBuffer.sampleRate;
   const numberOfChannels = audioBuffer.numberOfChannels;
 
-  // Calculate chunk duration based on file size and audio duration
-  // Estimate: file size / duration = bytes per second
-  const bytesPerSecond = file.size / duration;
-  const chunkDuration = Math.floor(CHUNK_TARGET_SIZE / bytesPerSecond);
+  // Calculate WAV output size per second
+  // WAV size = sample_rate * (bit_depth/8) * channels * duration
+  const bytesPerSecond = sampleRate * 2 * numberOfChannels; // 16-bit = 2 bytes
 
-  // Minimum chunk duration: 30 seconds, Maximum: 10 minutes
-  const minChunkDuration = 30;
-  const maxChunkDuration = 600;
-  const finalChunkDuration = Math.max(minChunkDuration, Math.min(maxChunkDuration, chunkDuration));
+  // Calculate max chunk duration to stay under Whisper limit (with safety margin)
+  const maxDurationForSize = Math.floor((WHISPER_MAX_SIZE * 0.8) / bytesPerSecond);
+
+  // Use the smaller of calculated max or our fixed max
+  const finalChunkDuration = Math.min(maxDurationForSize, MAX_CHUNK_DURATION_SECONDS);
+
+  console.log(`Audio info: ${duration}s, ${sampleRate}Hz, ${numberOfChannels}ch`);
+  console.log(`Bytes per second: ${bytesPerSecond}, Max chunk duration: ${finalChunkDuration}s`);
 
   const numberOfChunks = Math.ceil(duration / finalChunkDuration);
 
