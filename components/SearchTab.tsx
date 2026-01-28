@@ -6,9 +6,10 @@ import { Record } from '@/lib/records';
 type SearchTabProps = {
   onSearch: (query: string) => Promise<Record[]>;
   onViewRecord: (id: string) => void;
+  onBackToHome?: () => void;
 };
 
-export default function SearchTab({ onSearch, onViewRecord }: SearchTabProps) {
+export default function SearchTab({ onSearch, onViewRecord, onBackToHome }: SearchTabProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState<Record[]>([]);
   const [loading, setLoading] = useState(false);
@@ -50,6 +51,13 @@ export default function SearchTab({ onSearch, onViewRecord }: SearchTabProps) {
 
   return (
     <>
+      {/* Back to Home Button */}
+      {onBackToHome && (
+        <button className="btn btn-secondary back-btn" onClick={onBackToHome}>
+          ← ホームに戻る
+        </button>
+      )}
+
       {/* Search Box */}
       <div className="search-box">
         <span className="search-icon">🔍</span>

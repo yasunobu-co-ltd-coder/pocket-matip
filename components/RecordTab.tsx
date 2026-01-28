@@ -10,6 +10,7 @@ type RecordTabProps = {
     content: string,
     imageUrls: string[]
   ) => Promise<boolean>;
+  onBackToHome?: () => void;
 };
 
 type MinutesData = {
@@ -23,7 +24,7 @@ type MinutesData = {
   nextSchedule?: string;
 };
 
-export default function RecordTab({ onSaveRecord }: RecordTabProps) {
+export default function RecordTab({ onSaveRecord, onBackToHome }: RecordTabProps) {
   // Form state
   const [customerName, setCustomerName] = useState('');
   const [contactPerson, setContactPerson] = useState('');
@@ -322,6 +323,13 @@ JSONのフォーマットは以下に従ってください（必ず有効なJSON
 
   return (
     <>
+      {/* Back to Home Button */}
+      {onBackToHome && (
+        <button className="btn btn-secondary back-btn" onClick={onBackToHome}>
+          ← ホームに戻る
+        </button>
+      )}
+
       {/* Business Info Card */}
       <div className="card">
         <div className="card-title">

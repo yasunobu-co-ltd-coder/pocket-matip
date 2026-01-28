@@ -79,6 +79,29 @@ export async function getRecordById(id: string): Promise<Record | null> {
   }
 }
 
+// UPDATE: Update a record
+export async function updateRecord(id: string, updates: Partial<Omit<Record, 'id'>>): Promise<Record | null> {
+  try {
+    console.log('Updating record:', id, updates);
+    const { data, error } = await supabase
+      .from('records')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating record:', error);
+      return null;
+    }
+    console.log('Record updated:', data);
+    return data;
+  } catch (e) {
+    console.error('Exception updating record:', e);
+    return null;
+  }
+}
+
 // DELETE: Delete a record
 export async function deleteRecord(id: string): Promise<boolean> {
   try {

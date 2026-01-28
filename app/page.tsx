@@ -89,6 +89,10 @@ export default function Page() {
     return success;
   };
 
+  const handleUpdateRecord = (updatedRecord: Record) => {
+    setRecords(records.map((r) => (r.id === updatedRecord.id ? updatedRecord : r)));
+  };
+
   // Save new negotiation record
   const saveNegotiationRecord = async (
     customer: string,
@@ -126,12 +130,39 @@ export default function Page() {
       {/* Header */}
       <div className="header">
         <div className="header-content">
-          <div className="version-badge">ver0.1</div>
+          <div className="version-badge">ver0.2</div>
           <div className="logo">
             <div className="logo-icon">📱</div>
             <h1>Pocket Matip</h1>
           </div>
           <p>営業活動特化型モバイルアシスタント</p>
+          {/* Navigation Buttons */}
+          <div className="header-nav">
+            <button
+              className={`header-nav-btn ${activeTab === 'home' ? 'active' : ''}`}
+              onClick={() => switchTab('home')}
+            >
+              🏠 ホーム
+            </button>
+            <button
+              className={`header-nav-btn ${activeTab === 'record' ? 'active' : ''}`}
+              onClick={() => switchTab('record')}
+            >
+              🎤 録音
+            </button>
+            <button
+              className={`header-nav-btn`}
+              onClick={openPhotoCapture}
+            >
+              📷 写真
+            </button>
+            <button
+              className={`header-nav-btn ${activeTab === 'search' ? 'active' : ''}`}
+              onClick={() => switchTab('search')}
+            >
+              🔍 検索
+            </button>
+          </div>
         </div>
       </div>
 
@@ -150,7 +181,10 @@ export default function Page() {
 
         {/* Record Tab */}
         <div className={`tab-panel ${activeTab === 'record' ? 'active' : ''}`}>
-          <RecordTab onSaveRecord={saveNegotiationRecord} />
+          <RecordTab
+            onSaveRecord={saveNegotiationRecord}
+            onBackToHome={() => switchTab('home')}
+          />
         </div>
 
         {/* Search Tab */}
@@ -158,6 +192,7 @@ export default function Page() {
           <SearchTab
             onSearch={handleSearch}
             onViewRecord={viewRecord}
+            onBackToHome={() => switchTab('home')}
           />
         </div>
       </div>
@@ -172,6 +207,7 @@ export default function Page() {
           recordId={selectedRecordId}
           onClose={closeRecordDetail}
           onDelete={handleDeleteRecord}
+          onUpdate={handleUpdateRecord}
         />
       )}
     </div>
