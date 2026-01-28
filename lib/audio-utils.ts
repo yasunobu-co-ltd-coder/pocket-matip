@@ -2,14 +2,13 @@
  * Audio utility functions for splitting large files
  */
 
-// Whisper API limit
-const WHISPER_MAX_SIZE = 25 * 1024 * 1024; // 25MB
-
+// Vercel serverless function body limit is 4.5MB
 // WAV file size calculation:
 // WAV size = (sample_rate * bit_depth/8 * channels * duration) + 44 bytes header
-// For 16bit stereo 44.1kHz: ~10MB per minute
-// Target: 20MB = ~2 minutes per chunk (with safety margin)
-const MAX_CHUNK_DURATION_SECONDS = 120; // 2 minutes max per chunk for WAV safety
+// For 16bit stereo 44.1kHz: ~176KB/second = ~10.5MB per minute
+// Target: 4MB max = ~22 seconds per chunk (with safety margin)
+const VERCEL_BODY_LIMIT = 4 * 1024 * 1024; // 4MB (safe margin under 4.5MB)
+const MAX_CHUNK_DURATION_SECONDS = 20; // 20 seconds max per chunk for Vercel limit
 
 export type AudioChunk = {
   blob: Blob;
@@ -59,8 +58,8 @@ export async function splitAudioFile(
   // WAV size = sample_rate * (bit_depth/8) * channels * duration
   const bytesPerSecond = sampleRate * 2 * numberOfChannels; // 16-bit = 2 bytes
 
-  // Calculate max chunk duration to stay under Whisper limit (with safety margin)
-  const maxDurationForSize = Math.floor((WHISPER_MAX_SIZE * 0.8) / bytesPerSecond);
+  // Calculate max chunk duration to stay under Vercel body limit
+  const maxDurationForSize = Math.floor((VERCEL_BODY_LIMIT * 0.9) / bytesPerSecond);
 
   // Use the smaller of calculated max or our fixed max
   const finalChunkDuration = Math.min(maxDurationForSize, MAX_CHUNK_DURATION_SECONDS);

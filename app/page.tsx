@@ -122,7 +122,7 @@ export default function Page() {
       {/* Header */}
       <div className="header">
         <div className="header-content">
-          <div className="version-badge">ver0.8</div>
+          <div className="version-badge">ver0.9</div>
           <div className="logo">
             <div className="logo-icon">📱</div>
             <h1>Pocket Matip</h1>
