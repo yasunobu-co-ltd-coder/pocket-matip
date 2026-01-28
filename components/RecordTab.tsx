@@ -52,6 +52,7 @@ export default function RecordTab({ onSaveRecord, onBackToHome }: RecordTabProps
   const startTimeRef = useRef<number>(0);
   const pausedTimeRef = useRef<number>(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const audioFileInputRef = useRef<HTMLInputElement>(null);
 
   // Timer update
   const updateTimer = useCallback(() => {
@@ -136,6 +137,42 @@ export default function RecordTab({ onSaveRecord, onBackToHome }: RecordTabProps
   const toggleRecording = () => {
     if (!isRecording) {
       startRecording();
+    }
+  };
+
+  // Handle audio file upload
+  const handleAudioFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check file type
+    const allowedTypes = ['audio/mpeg', 'audio/mp4', 'audio/m4a', 'audio/wav', 'audio/webm', 'audio/ogg', 'audio/x-m4a'];
+    const allowedExtensions = ['.mp3', '.m4a', '.wav', '.webm', '.ogg', '.mp4'];
+    const ext = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+
+    if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(ext)) {
+      alert('対応していない音声形式です。\n対応形式: MP3, M4A, WAV, WebM, OGG');
+      return;
+    }
+
+    // Check file size (max 25MB for Whisper API)
+    if (file.size > 25 * 1024 * 1024) {
+      alert('ファイルサイズが大きすぎます。最大25MBまで対応しています。');
+      return;
+    }
+
+    // Create URL for playback
+    const url = URL.createObjectURL(file);
+    setAudioUrl(url);
+    setRecordStatus(`ファイル選択: ${file.name}`);
+    setTimer('--:--');
+
+    // Process the audio file
+    processAudio(file);
+
+    // Reset input
+    if (audioFileInputRef.current) {
+      audioFileInputRef.current.value = '';
     }
   };
 
@@ -377,13 +414,41 @@ JSONのフォーマットは以下に従ってください（必ず有効なJSON
         <div className="record-section">
           <div className="record-status">{recordStatus}</div>
 
-          <button
-            className={`record-btn ${isRecording && !isPaused ? 'recording' : ''}`}
-            onClick={toggleRecording}
-            disabled={isRecording}
-          >
-            {isRecording ? (isPaused ? '⏸️' : '🎤') : minutesData ? '✓' : '🎤'}
-          </button>
+          {/* Recording Buttons */}
+          <div className="record-buttons">
+            <button
+              className={`record-btn ${isRecording && !isPaused ? 'recording' : ''}`}
+              onClick={toggleRecording}
+              disabled={isRecording || isProcessing}
+            >
+              {isRecording ? (isPaused ? '⏸️' : '🎤') : minutesData ? '✓' : '🎤'}
+            </button>
+
+            <div className="record-divider">
+              <span>または</span>
+            </div>
+
+            <button
+              className="audio-upload-btn"
+              onClick={() => audioFileInputRef.current?.click()}
+              disabled={isRecording || isProcessing}
+            >
+              📁
+              <span>ファイル選択</span>
+            </button>
+          </div>
+
+          <input
+            ref={audioFileInputRef}
+            type="file"
+            accept=".mp3,.m4a,.wav,.webm,.ogg,.mp4,audio/*"
+            hidden
+            onChange={handleAudioFileUpload}
+          />
+
+          <div className="audio-formats-hint">
+            対応形式: MP3, M4A, WAV, WebM（最大25MB）
+          </div>
 
           {isRecording && !isPaused && (
             <div className="waveform">
