@@ -44,13 +44,13 @@ export default function Page() {
             <span className="text-[20px] font-extrabold bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent tracking-tight">Pocket Matip</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-[13px] font-semibold text-violet-300/40 bg-violet-500/[0.08] px-4 py-2 rounded-full border border-violet-500/[0.08]">
+            <span className="text-[13px] font-semibold text-white/70 bg-violet-500/[0.08] px-4 py-2 rounded-full border border-violet-500/[0.08]">
               {currentUser.name}
             </span>
             <button onClick={handleLogout}
               className="p-2.5 rounded-xl hover:bg-violet-500/10 transition-all active:scale-95"
               title="ユーザー切替">
-              <LogOut className="w-5 h-5 text-violet-400/40" />
+              <LogOut className="w-5 h-5 text-white/50" />
             </button>
           </div>
         </div>
@@ -72,11 +72,11 @@ export default function Page() {
                 <Mic className="w-10 h-10" />
               </div>
               <div>
-                <div className="text-[19px] font-bold text-white/90 mb-1.5">議事録を作成</div>
-                <div className="text-[14px] text-white/30 leading-relaxed">
+                <div className="text-[19px] font-bold text-white mb-1.5">議事録を作成</div>
+                <div className="text-[14px] text-white/60 leading-relaxed">
                   録音またはファイルアップロード
                 </div>
-                <div className="text-violet-400/25 text-[12px] flex items-center justify-center gap-1.5 mt-3">
+                <div className="text-violet-300/60 text-[12px] flex items-center justify-center gap-1.5 mt-3">
                   <Upload className="w-3.5 h-3.5" />
                   ボイスメモの共有にも対応
                 </div>
@@ -86,12 +86,12 @@ export default function Page() {
             {/* Recent Records Card */}
             <div className="bg-[#0c0815]/80 backdrop-blur-xl rounded-[22px] border border-violet-500/10 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.2)]">
               <div className="flex items-center justify-between px-5 pt-5 pb-3">
-                <h3 className="text-[15px] font-bold text-white/50 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-violet-400/40" />
+                <h3 className="text-[15px] font-bold text-white flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-violet-400" />
                   最近の記録
                 </h3>
                 <button onClick={() => setActiveTab('history')}
-                  className="text-[13px] text-violet-400/40 hover:text-violet-400/60 transition-colors flex items-center gap-1 font-medium px-3 py-1.5 rounded-lg hover:bg-violet-500/10">
+                  className="text-[13px] text-violet-300 hover:text-violet-200 transition-colors flex items-center gap-1 font-medium px-3 py-1.5 rounded-lg hover:bg-violet-500/10">
                   すべて見る
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -120,7 +120,7 @@ export default function Page() {
           <div className="animate-fade-in-up">
             <div className="bg-[#0c0815]/80 backdrop-blur-xl rounded-[22px] border border-violet-500/10 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.2)] min-h-[500px]">
               <div className="px-5 pt-6 pb-4">
-                <h3 className="text-[17px] font-bold text-white/80">📋 全履歴一覧</h3>
+                <h3 className="text-[17px] font-bold text-white">📋 全履歴一覧</h3>
               </div>
               <div className="px-4 pb-5">
                 <HistoryList userId={currentUser.id} refreshTrigger={refreshTrigger} />
@@ -135,7 +135,7 @@ export default function Page() {
         <div className="flex justify-around items-center py-4 pb-[max(16px,env(safe-area-inset-bottom))]">
           <button
             onClick={() => { setActiveTab('home'); setMode('idle'); }}
-            className={`flex flex-col items-center gap-1.5 w-24 py-1 transition-all ${activeTab === 'home' ? 'text-violet-400' : 'text-white/25'}`}
+            className={`flex flex-col items-center gap-1.5 w-24 py-1 transition-all ${activeTab === 'home' ? 'text-violet-400' : 'text-white/50'}`}
           >
             <Home className="w-6 h-6" />
             <span className={`text-[13px] ${activeTab === 'home' ? 'font-bold' : 'font-medium'}`}>ホーム</span>
@@ -150,7 +150,7 @@ export default function Page() {
           </button>
           <button
             onClick={() => { setActiveTab('history'); setMode('idle'); }}
-            className={`flex flex-col items-center gap-1.5 w-24 py-1 transition-all ${activeTab === 'history' ? 'text-violet-400' : 'text-white/25'}`}
+            className={`flex flex-col items-center gap-1.5 w-24 py-1 transition-all ${activeTab === 'history' ? 'text-violet-400' : 'text-white/50'}`}
           >
             <List className="w-6 h-6" />
             <span className={`text-[13px] ${activeTab === 'history' ? 'font-bold' : 'font-medium'}`}>履歴</span>
@@ -160,7 +160,7 @@ export default function Page() {
 
       {/* Footer version (above bottom nav) */}
       <div className="text-center pb-20 pt-2">
-        <p className="text-[9px] text-violet-500/10 font-mono">v8.0</p>
+        <p className="text-[9px] text-white/20 font-mono">v8.0</p>
       </div>
     </div>
   );

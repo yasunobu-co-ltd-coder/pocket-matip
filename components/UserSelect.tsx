@@ -61,25 +61,25 @@ export default function UserSelect({ onSelect }: UserSelectProps) {
                     📱
                 </div>
                 <h1 className="text-[28px] font-extrabold text-white tracking-tight mb-1.5">Pocket Matip</h1>
-                <p className="text-violet-300/30 text-[13px] font-medium">音声から議事録を自動生成</p>
+                <p className="text-white/50 text-[13px] font-medium">音声から議事録を自動生成</p>
             </div>
 
             {/* Card */}
             <div className="w-full max-w-sm relative z-10 bg-[#0c0815]/80 backdrop-blur-xl rounded-[24px] border border-violet-500/10 p-6 shadow-[0_20px_60px_-15px_rgba(88,28,135,0.2)]">
-                <p className="text-[11px] font-bold text-violet-300/20 uppercase tracking-[0.15em] mb-5 text-center">ユーザーを選択</p>
+                <p className="text-[11px] font-bold text-white/50 uppercase tracking-[0.15em] mb-5 text-center">ユーザーを選択</p>
 
                 {loading && (
                     <div className="flex flex-col items-center justify-center py-14 gap-3">
-                        <Loader2 className="w-7 h-7 text-violet-500/60 animate-spin" />
-                        <p className="text-[11px] text-violet-300/20">読み込み中...</p>
+                        <Loader2 className="w-7 h-7 text-violet-400 animate-spin" />
+                        <p className="text-[11px] text-white/50">読み込み中...</p>
                     </div>
                 )}
 
                 {error && (
                     <div className="bg-red-500/[0.06] border border-red-500/10 rounded-2xl p-5 text-center">
-                        <p className="text-[13px] text-red-400/70 mb-4">{error}</p>
+                        <p className="text-[13px] text-red-300 mb-4">{error}</p>
                         <button onClick={fetchUsers}
-                            className="text-[12px] text-violet-400/70 hover:text-violet-300 flex items-center gap-1.5 mx-auto bg-violet-500/10 px-4 py-2 rounded-xl transition-all active:scale-95">
+                            className="text-[12px] text-white hover:text-violet-300 flex items-center gap-1.5 mx-auto bg-violet-500/10 px-4 py-2 rounded-xl transition-all active:scale-95">
                             <RefreshCw className="w-3.5 h-3.5" />
                             再読み込み
                         </button>
@@ -89,9 +89,9 @@ export default function UserSelect({ onSelect }: UserSelectProps) {
                 {!loading && !error && users.length === 0 && (
                     <div className="text-center py-12">
                         <div className="w-14 h-14 bg-violet-500/[0.06] rounded-2xl flex items-center justify-center mx-auto mb-3">
-                            <User className="w-6 h-6 text-violet-500/20" />
+                            <User className="w-6 h-6 text-violet-400/40" />
                         </div>
-                        <p className="text-slate-500 text-[13px]">ユーザーが登録されていません</p>
+                        <p className="text-white/60 text-[13px]">ユーザーが登録されていません</p>
                     </div>
                 )}
 
@@ -107,17 +107,17 @@ export default function UserSelect({ onSelect }: UserSelectProps) {
                                     <User className="w-5 h-5 text-white" />
                                 </div>
                                 <div className="flex-1 text-left">
-                                    <div className="text-[15px] font-bold text-white/90">{user.name}</div>
-                                    <div className="text-[11px] text-violet-300/20 mt-0.5">タップしてログイン</div>
+                                    <div className="text-[15px] font-bold text-white">{user.name}</div>
+                                    <div className="text-[11px] text-white/50 mt-0.5">タップしてログイン</div>
                                 </div>
-                                <ChevronRight className="w-4 h-4 text-violet-500/15 group-hover:text-violet-400/40 group-hover:translate-x-0.5 transition-all" />
+                                <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-violet-400 group-hover:translate-x-0.5 transition-all" />
                             </button>
                         ))}
                     </div>
                 )}
             </div>
 
-            <p className="text-[10px] text-violet-500/10 font-mono mt-14 relative z-10">v8.0</p>
+            <p className="text-[10px] text-white/20 font-mono mt-14 relative z-10">v8.0</p>
         </div>
     );
 }

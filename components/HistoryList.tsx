@@ -64,7 +64,7 @@ export default function HistoryList({ userId, refreshTrigger }: HistoryListProps
     if (loading) {
         return (
             <div className="flex items-center justify-center py-10">
-                <Loader2 className="w-5 h-5 text-violet-500/40 animate-spin" />
+                <Loader2 className="w-5 h-5 text-violet-400 animate-spin" />
             </div>
         );
     }
@@ -72,7 +72,7 @@ export default function HistoryList({ userId, refreshTrigger }: HistoryListProps
     if (error) {
         return (
             <div className="text-center py-8">
-                <p className="text-[12px] text-red-400/60 bg-red-500/[0.05] rounded-xl py-3 px-4 border border-red-500/10">{error}</p>
+                <p className="text-[12px] text-red-300 bg-red-500/[0.08] rounded-xl py-3 px-4 border border-red-500/15">{error}</p>
             </div>
         );
     }
@@ -81,10 +81,10 @@ export default function HistoryList({ userId, refreshTrigger }: HistoryListProps
         return (
             <div className="text-center py-14">
                 <div className="w-14 h-14 bg-violet-500/[0.05] rounded-[16px] flex items-center justify-center mx-auto mb-3 border border-violet-500/[0.06]">
-                    <FileText className="w-6 h-6 text-violet-500/15" />
+                    <FileText className="w-6 h-6 text-violet-400/40" />
                 </div>
-                <p className="text-white/30 text-[13px] font-medium">まだ記録がありません</p>
-                <p className="text-violet-300/15 text-[11px] mt-1">議事録を作成すると表示されます</p>
+                <p className="text-white/70 text-[13px] font-medium">まだ記録がありません</p>
+                <p className="text-white/40 text-[11px] mt-1">議事録を作成すると表示されます</p>
             </div>
         );
     }
@@ -96,16 +96,16 @@ export default function HistoryList({ userId, refreshTrigger }: HistoryListProps
                     className="bg-white/[0.02] backdrop-blur-sm rounded-[16px] p-4.5 border border-violet-500/[0.06] hover:border-violet-500/12 hover:bg-violet-500/[0.03] transition-all duration-200">
                     <div className="flex items-start gap-3.5">
                         <div className="w-11 h-11 rounded-[12px] bg-gradient-to-br from-violet-500/10 to-purple-500/10 flex items-center justify-center flex-shrink-0 border border-violet-500/[0.06]">
-                            <FileText className="w-5 h-5 text-violet-400/50" />
+                            <FileText className="w-5 h-5 text-violet-400" />
                         </div>
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between gap-2 mb-1.5">
-                                <span className="text-[15px] font-bold text-white/85 truncate">{record.client_name || '名称なし'}</span>
-                                <span className="text-[11px] text-violet-400/30 flex-shrink-0 bg-violet-500/[0.05] px-2.5 py-1 rounded-md">
+                                <span className="text-[15px] font-bold text-white truncate">{record.client_name || '名称なし'}</span>
+                                <span className="text-[11px] text-white/50 flex-shrink-0 bg-violet-500/[0.08] px-2.5 py-1 rounded-md">
                                     {formatDate(record.created_at)}
                                 </span>
                             </div>
-                            <p className="text-[13px] text-slate-400/50 line-clamp-2 leading-[1.6]">{record.summary}</p>
+                            <p className="text-[13px] text-white/60 line-clamp-2 leading-[1.6]">{record.summary}</p>
                         </div>
                     </div>
                 </div>
