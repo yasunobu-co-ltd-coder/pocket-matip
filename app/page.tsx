@@ -63,16 +63,20 @@ export default function Page() {
   // Recent 3 records
   const recentRecords = useMemo(() => homeRecords.slice(0, 3), [homeRecords]);
 
-  // Monthly count
-  const monthlyCount = useMemo(() => {
+  // Monthly counts
+  const monthlyCounts = useMemo(() => {
     const now = new Date();
     const year = now.getFullYear();
     const month = now.getMonth();
-    return homeRecords.filter(r => {
+    const thisMonth = homeRecords.filter(r => {
       const d = new Date(r.created_at);
       return d.getFullYear() === year && d.getMonth() === month;
-    }).length;
-  }, [homeRecords]);
+    });
+    return {
+      mine: thisMonth.filter(r => r.user_id === currentUser?.id).length,
+      total: thisMonth.length,
+    };
+  }, [homeRecords, currentUser]);
 
   const formatDateShort = (dateStr: string) => {
     const d = new Date(dateStr);
@@ -160,9 +164,18 @@ export default function Page() {
             {/* 3. Monthly count */}
             <section>
               <h2 className="text-[13px] font-bold text-slate-400 uppercase tracking-[0.5px] mb-4">今月の作成数</h2>
-              <div className="bg-white rounded-[16px] border border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.04)] px-6 py-6 flex items-baseline gap-2">
-                <span className="text-[36px] font-extrabold text-violet-600">{monthlyCount}</span>
-                <span className="text-[15px] font-semibold text-slate-500">件</span>
+              <div className="bg-white rounded-[16px] border border-slate-200 shadow-[0_2px_8px_rgba(0,0,0,0.04)] px-6 py-6 flex items-center gap-6">
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-[32px] font-extrabold text-violet-600">{monthlyCounts.mine}</span>
+                  <span className="text-[13px] font-semibold text-slate-500">件</span>
+                  <span className="text-[12px] text-slate-400 ml-1">自分</span>
+                </div>
+                <div className="w-px h-8 bg-slate-200" />
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-[32px] font-extrabold text-slate-400">{monthlyCounts.total}</span>
+                  <span className="text-[13px] font-semibold text-slate-500">件</span>
+                  <span className="text-[12px] text-slate-400 ml-1">全件</span>
+                </div>
                 <span className="text-[12px] text-slate-400 ml-auto">{new Date().getMonth() + 1}月</span>
               </div>
             </section>
