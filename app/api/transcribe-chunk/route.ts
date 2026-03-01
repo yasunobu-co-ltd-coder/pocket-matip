@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
 export const runtime = 'nodejs';
+export const maxDuration = 120; // Vercel serverless timeout を120秒に延長
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -20,7 +21,7 @@ export async function POST(req: NextRequest) {
         console.log(`Chunk ${chunkIndex} info:`, {
             name: file.name,
             type: file.type,
-            size: file.size
+            size: `${(file.size / 1024 / 1024).toFixed(2)}MB`
         });
 
         const MAX_SIZE = 25 * 1024 * 1024;
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
 
         const transcription = await openai.audio.transcriptions.create({
             file: file,
-            model: 'whisper-1',
+            model: 'gpt-4o-mini-transcribe',
             language: 'ja',
         });
 

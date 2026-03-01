@@ -1,9 +1,12 @@
 /**
- * 音声ファイルをWeb Audio APIでデコードし、WAVチャンクに分割する
- * 各チャンクはWhisper APIの25MB制限内に収まるサイズ
+ * 音声ファイルをWeb Audio APIでデコードし、16kHz WAVチャンクに分割する
+ * 16kHzダウンサンプルでファイルサイズを大幅削減（Whisperの内部処理も16kHz）
  */
 
-const CHUNK_DURATION_SEC = 180; // 3分ごとに分割
+const CHUNK_DURATION_SEC = 18; // 18秒ごとに分割（1時間≒200チャンク）
+const TARGET_SAMPLE_RATE = 16000; // 16kHz（Whisper最適）
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 2000;
 
 /** Float32Array → 16bit PCM WAV Blob に変換 */
 function encodeWav(samples: Float32Array, sampleRate: number): Blob {
@@ -22,13 +25,13 @@ function encodeWav(samples: Float32Array, sampleRate: number): Blob {
     view.setUint32(4, byteLength - 8, true);
     writeStr(8, 'WAVE');
     writeStr(12, 'fmt ');
-    view.setUint32(16, 16, true);          // fmt chunk size
+    view.setUint32(16, 16, true);
     view.setUint16(20, 1, true);           // PCM
     view.setUint16(22, 1, true);           // mono
-    view.setUint32(24, sampleRate, true);   // sample rate
-    view.setUint32(28, sampleRate * 2, true); // byte rate
-    view.setUint16(32, 2, true);           // block align
-    view.setUint16(34, 16, true);          // bits per sample
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * 2, true);
+    view.setUint16(32, 2, true);
+    view.setUint16(34, 16, true);
     writeStr(36, 'data');
     view.setUint32(40, numSamples * 2, true);
 
@@ -42,51 +45,85 @@ function encodeWav(samples: Float32Array, sampleRate: number): Blob {
     return new Blob([buffer], { type: 'audio/wav' });
 }
 
-/** 音声ファイルをデコードしてWAVチャンク配列を返す */
+/** 線形補間でダウンサンプル */
+function downsample(channelData: Float32Array, originalRate: number, targetRate: number): Float32Array {
+    if (originalRate === targetRate) return channelData;
+
+    const ratio = originalRate / targetRate;
+    const newLength = Math.floor(channelData.length / ratio);
+    const result = new Float32Array(newLength);
+
+    for (let i = 0; i < newLength; i++) {
+        const srcIdx = i * ratio;
+        const srcFloor = Math.floor(srcIdx);
+        const srcCeil = Math.min(srcFloor + 1, channelData.length - 1);
+        const frac = srcIdx - srcFloor;
+        result[i] = channelData[srcFloor] * (1 - frac) + channelData[srcCeil] * frac;
+    }
+
+    return result;
+}
+
+/** 音声ファイルをデコード→16kHzダウンサンプル→WAVチャンク配列を返す */
 export async function splitAudioIntoChunks(file: File): Promise<{ chunks: Blob[]; totalDuration: number }> {
     const arrayBuffer = await file.arrayBuffer();
     const audioContext = new AudioContext();
     const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
-    const sampleRate = audioBuffer.sampleRate;
-    const totalSamples = audioBuffer.length;
+    const originalRate = audioBuffer.sampleRate;
     const totalDuration = audioBuffer.duration;
-    // モノラルに変換（チャンネル0を使用）
-    const channelData = audioBuffer.getChannelData(0);
+    const channelData = audioBuffer.getChannelData(0); // mono
 
-    const samplesPerChunk = sampleRate * CHUNK_DURATION_SEC;
+    // 16kHzにダウンサンプル
+    const downsampled = downsample(channelData, originalRate, TARGET_SAMPLE_RATE);
+    const totalSamples = downsampled.length;
+
+    const samplesPerChunk = TARGET_SAMPLE_RATE * CHUNK_DURATION_SEC;
     const totalChunks = Math.ceil(totalSamples / samplesPerChunk);
 
     const chunks: Blob[] = [];
     for (let i = 0; i < totalChunks; i++) {
         const start = i * samplesPerChunk;
         const end = Math.min(start + samplesPerChunk, totalSamples);
-        const chunkSamples = channelData.slice(start, end);
-        chunks.push(encodeWav(chunkSamples, sampleRate));
+        const chunkSamples = downsampled.slice(start, end);
+        chunks.push(encodeWav(chunkSamples, TARGET_SAMPLE_RATE));
     }
 
     await audioContext.close();
     return { chunks, totalDuration };
 }
 
-/** 1チャンクをWhisper APIへ送信して文字起こし */
+/** 1チャンクをWhisper APIへ送信（リトライ付き） */
 async function transcribeChunk(chunk: Blob, index: number): Promise<{ index: number; text: string }> {
-    const formData = new FormData();
-    formData.append('file', new File([chunk], `chunk_${index}.wav`, { type: 'audio/wav' }));
-    formData.append('chunkIndex', String(index));
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+        try {
+            const formData = new FormData();
+            formData.append('file', new File([chunk], `chunk_${index}.wav`, { type: 'audio/wav' }));
+            formData.append('chunkIndex', String(index));
 
-    const resp = await fetch('/api/transcribe-chunk', {
-        method: 'POST',
-        body: formData,
-    });
+            const resp = await fetch('/api/transcribe-chunk', {
+                method: 'POST',
+                body: formData,
+            });
 
-    if (!resp.ok) {
-        const err = await resp.json().catch(() => ({ error: 'Unknown error' }));
-        throw new Error(err.error || `チャンク${index}の文字起こし失敗 (${resp.status})`);
+            if (!resp.ok) {
+                const err = await resp.json().catch(() => ({ error: 'Unknown error' }));
+                throw new Error(err.error || `チャンク${index}の文字起こし失敗 (${resp.status})`);
+            }
+
+            const data = await resp.json();
+            return { index, text: data.text || '' };
+        } catch (e) {
+            console.warn(`Chunk ${index} attempt ${attempt + 1} failed:`, e);
+            if (attempt < MAX_RETRIES - 1) {
+                await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS * (attempt + 1)));
+            } else {
+                throw e;
+            }
+        }
     }
 
-    const data = await resp.json();
-    return { index, text: data.text || '' };
+    throw new Error(`チャンク${index}の文字起こしに${MAX_RETRIES}回失敗しました`);
 }
 
 /**
