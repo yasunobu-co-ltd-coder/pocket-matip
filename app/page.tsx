@@ -34,11 +34,11 @@ export default function Page() {
   }
 
   return (
-    <div className="min-h-screen pb-28 font-sans text-slate-200 relative">
+    <div className="min-h-screen pb-32 font-sans text-slate-200 relative">
 
       {/* Sticky Top Bar */}
       <div className="sticky top-0 z-50 bg-[#05020d]/90 backdrop-blur-xl border-b border-violet-500/[0.06]">
-        <div className="flex items-center justify-between px-6 py-5">
+        <div className="flex items-center justify-between px-7 py-6">
           <div className="flex items-center gap-3">
             <span className="text-[26px]">📱</span>
             <span className="text-[20px] font-extrabold bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent tracking-tight">Pocket Matip</span>
@@ -57,26 +57,26 @@ export default function Page() {
       </div>
 
       {/* Main Content */}
-      <main className="px-5 pt-6 pb-4 space-y-5">
+      <main className="px-6 pt-8 pb-6 space-y-6">
 
         {/* Home Tab */}
         {activeTab === 'home' && mode === 'idle' && (
-          <div className="space-y-5 animate-fade-in-up">
+          <div className="space-y-6 animate-fade-in-up">
 
             {/* Main CTA Card */}
             <button
               onClick={() => setMode('voice')}
-              className="w-full bg-[#0c0815]/80 backdrop-blur-xl p-8 rounded-[22px] border border-violet-500/10 shadow-[0_10px_40px_-10px_rgba(88,28,135,0.15)] hover:border-violet-500/20 hover:shadow-[0_10px_50px_-10px_rgba(88,28,135,0.25)] transition-all duration-300 active:scale-[0.98] flex flex-col items-center text-center gap-6 group"
+              className="w-full bg-[#0c0815]/80 backdrop-blur-xl p-10 rounded-[22px] border border-violet-500/10 shadow-[0_10px_40px_-10px_rgba(88,28,135,0.15)] hover:border-violet-500/20 hover:shadow-[0_10px_50px_-10px_rgba(88,28,135,0.25)] transition-all duration-300 active:scale-[0.98] flex flex-col items-center text-center gap-7 group"
             >
               <div className="w-[88px] h-[88px] rounded-full bg-gradient-to-br from-violet-500/15 to-purple-600/15 flex items-center justify-center text-violet-400 group-hover:from-violet-500 group-hover:to-purple-600 group-hover:text-white transition-all duration-300 shadow-[0_0_40px_rgba(139,92,246,0.12)] group-hover:shadow-[0_0_60px_rgba(139,92,246,0.3)] border border-violet-500/10 group-hover:border-violet-400/30">
                 <Mic className="w-10 h-10" />
               </div>
               <div>
-                <div className="text-[19px] font-bold text-white mb-1.5">議事録を作成</div>
+                <div className="text-[19px] font-bold text-white mb-2">議事録を作成</div>
                 <div className="text-[14px] text-white/60 leading-relaxed">
                   録音またはファイルアップロード
                 </div>
-                <div className="text-violet-300/60 text-[12px] flex items-center justify-center gap-1.5 mt-3">
+                <div className="text-violet-300/60 text-[12px] flex items-center justify-center gap-1.5 mt-4">
                   <Upload className="w-3.5 h-3.5" />
                   ボイスメモの共有にも対応
                 </div>
@@ -85,7 +85,7 @@ export default function Page() {
 
             {/* Recent Records Card */}
             <div className="bg-[#0c0815]/80 backdrop-blur-xl rounded-[22px] border border-violet-500/10 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.2)]">
-              <div className="flex items-center justify-between px-5 pt-5 pb-3">
+              <div className="flex items-center justify-between px-6 pt-6 pb-4">
                 <h3 className="text-[15px] font-bold text-white flex items-center gap-2">
                   <Clock className="w-4 h-4 text-violet-400" />
                   最近の記録
@@ -96,7 +96,7 @@ export default function Page() {
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
-              <div className="max-h-[400px] overflow-y-auto px-4 pb-4">
+              <div className="max-h-[400px] overflow-y-auto px-5 pb-5">
                 <HistoryList userId={currentUser.id} refreshTrigger={refreshTrigger} />
               </div>
             </div>
@@ -119,10 +119,10 @@ export default function Page() {
         {activeTab === 'history' && mode === 'idle' && (
           <div className="animate-fade-in-up">
             <div className="bg-[#0c0815]/80 backdrop-blur-xl rounded-[22px] border border-violet-500/10 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.2)] min-h-[500px]">
-              <div className="px-5 pt-6 pb-4">
+              <div className="px-6 pt-7 pb-4">
                 <h3 className="text-[17px] font-bold text-white">📋 全履歴一覧</h3>
               </div>
-              <div className="px-4 pb-5">
+              <div className="px-5 pb-6">
                 <HistoryList userId={currentUser.id} refreshTrigger={refreshTrigger} />
               </div>
             </div>
@@ -132,7 +132,7 @@ export default function Page() {
 
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[520px] z-50 bg-[#05020d]/95 backdrop-blur-xl border-t border-violet-500/[0.06]">
-        <div className="flex justify-around items-center py-4 pb-[max(16px,env(safe-area-inset-bottom))]">
+        <div className="flex justify-around items-center py-5 pb-[max(20px,env(safe-area-inset-bottom))]">
           <button
             onClick={() => { setActiveTab('home'); setMode('idle'); }}
             className={`flex flex-col items-center gap-1.5 w-24 py-1 transition-all ${activeTab === 'home' ? 'text-violet-400' : 'text-white/50'}`}
@@ -144,7 +144,7 @@ export default function Page() {
             onClick={() => setMode('voice')}
             className="flex flex-col items-center gap-1 w-24"
           >
-            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-[0_4px_24px_rgba(139,92,246,0.4)] -mt-5 border-4 border-[#05020d] active:scale-95 transition-transform">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-[0_4px_24px_rgba(139,92,246,0.4)] -mt-6 border-4 border-[#05020d] active:scale-95 transition-transform">
               <Mic className="w-6 h-6 text-white" />
             </div>
           </button>

@@ -413,11 +413,11 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
     // === Processing Screen ===
     if (isProcessing) {
         return (
-            <div className="bg-[#0f0a1a] rounded-2xl p-12 text-center border border-violet-500/20 shadow-[0_0_40px_rgba(139,92,246,0.1)]">
-                <Loader2 className="w-12 h-12 text-violet-500 animate-spin mx-auto mb-4" />
-                <p className="text-white font-medium">{processStep}</p>
+            <div className="bg-[#0f0a1a] rounded-2xl p-14 text-center border border-violet-500/20 shadow-[0_0_40px_rgba(139,92,246,0.1)]">
+                <Loader2 className="w-12 h-12 text-violet-500 animate-spin mx-auto mb-5" />
+                <p className="text-white font-medium text-[15px]">{processStep}</p>
                 {uploadedFile && (
-                    <p className="text-xs text-white/50 mt-2">{uploadedFile.name}</p>
+                    <p className="text-sm text-white/50 mt-3">{uploadedFile.name}</p>
                 )}
             </div>
         );
@@ -427,27 +427,27 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
     if (showTranscript) {
         return (
             <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4">
-                <div className="bg-[#0f0a1a] rounded-2xl p-6 border border-violet-500/20 space-y-4 shadow-[0_0_40px_rgba(139,92,246,0.1)]">
-                    <div className="flex items-center gap-2 text-violet-400 font-bold mb-2">
+                <div className="bg-[#0f0a1a] rounded-2xl p-7 border border-violet-500/20 space-y-5 shadow-[0_0_40px_rgba(139,92,246,0.1)]">
+                    <div className="flex items-center gap-2.5 text-violet-400 font-bold mb-1">
                         <Check className="w-5 h-5" />
                         文字起こし完了
                     </div>
-                    <p className="text-xs text-white/60">
+                    <p className="text-sm text-white/60">
                         内容を確認・編集してから「議事録にまとめる」をタップしてください
                     </p>
                     <textarea
                         value={editableTranscript}
                         onChange={(e) => setEditableTranscript(e.target.value)}
-                        className="w-full h-64 bg-black/50 border border-violet-500/20 rounded-xl p-4 text-sm text-white focus:border-violet-500 outline-none resize-none placeholder-white/30"
+                        className="w-full h-64 bg-black/50 border border-violet-500/20 rounded-xl p-5 text-sm text-white focus:border-violet-500 outline-none resize-none placeholder-white/30"
                         placeholder="文字起こし結果..."
                     />
-                    <div className="flex gap-3">
+                    <div className="flex gap-3 pt-1">
                         <button onClick={resetAll}
-                            className="flex-1 bg-black/30 border border-violet-500/20 text-white font-bold py-3 rounded-xl hover:bg-violet-500/10 transition-colors">
+                            className="flex-1 bg-black/30 border border-violet-500/20 text-white font-bold py-3.5 rounded-xl hover:bg-violet-500/10 transition-colors">
                             やり直す
                         </button>
                         <button onClick={generateMinutes}
-                            className="flex-[2] bg-gradient-to-r from-violet-600 to-purple-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-violet-500/25 hover:scale-[1.02] transition-transform">
+                            className="flex-[2] bg-gradient-to-r from-violet-600 to-purple-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-violet-500/25 hover:scale-[1.02] transition-transform">
                             議事録にまとめる
                         </button>
                     </div>
@@ -460,24 +460,24 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
     if (result) {
         return (
             <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4">
-                <div className="bg-[#0f0a1a] rounded-2xl p-6 border border-violet-500/20 space-y-4 shadow-[0_0_40px_rgba(139,92,246,0.1)]">
-                    <div className="flex items-center gap-2 text-violet-400 font-bold mb-2">
+                <div className="bg-[#0f0a1a] rounded-2xl p-7 border border-violet-500/20 space-y-5 shadow-[0_0_40px_rgba(139,92,246,0.1)]">
+                    <div className="flex items-center gap-2.5 text-violet-400 font-bold mb-1">
                         <Check className="w-5 h-5" />
                         議事録生成完了
                     </div>
                     <div>
-                        <label className="block text-xs font-medium text-white/70 mb-1">顧客名</label>
+                        <label className="block text-sm font-medium text-white/70 mb-2">顧客名</label>
                         <input type="text" value={customer} onChange={(e) => setCustomer(e.target.value)}
-                            className="w-full bg-black/50 border border-violet-500/20 rounded-xl px-4 py-2 text-sm text-white focus:border-violet-500 outline-none" />
+                            className="w-full bg-black/50 border border-violet-500/20 rounded-xl px-4 py-3 text-sm text-white focus:border-violet-500 outline-none" />
                     </div>
-                    <div className="space-y-4 bg-black/30 p-4 rounded-xl border border-violet-500/10 text-sm">
+                    <div className="space-y-5 bg-black/30 p-5 rounded-xl border border-violet-500/10 text-sm">
                         <div>
-                            <h4 className="text-violet-400 font-bold mb-1">要約</h4>
+                            <h4 className="text-violet-400 font-bold mb-2">要約</h4>
                             <p className="text-white/80 leading-relaxed whitespace-pre-wrap">{result.summary}</p>
                         </div>
                         {result.decisions && result.decisions.length > 0 && (
                             <div>
-                                <h4 className="text-violet-400 font-bold mb-1">決定事項</h4>
+                                <h4 className="text-violet-400 font-bold mb-2">決定事項</h4>
                                 <ul className="list-disc pl-4 text-white/80 space-y-1">
                                     {result.decisions.map((d, i) => <li key={i}>{d}</li>)}
                                 </ul>
@@ -485,7 +485,7 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
                         )}
                         {result.todos && result.todos.length > 0 && (
                             <div>
-                                <h4 className="text-violet-400 font-bold mb-1">TODO</h4>
+                                <h4 className="text-violet-400 font-bold mb-2">TODO</h4>
                                 <ul className="list-disc pl-4 text-white/80 space-y-1">
                                     {result.todos.map((t, i) => <li key={i}>{t}</li>)}
                                 </ul>
@@ -493,18 +493,18 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
                         )}
                         {result.nextSchedule && (
                             <div>
-                                <h4 className="text-violet-400 font-bold mb-1">次回予定</h4>
+                                <h4 className="text-violet-400 font-bold mb-2">次回予定</h4>
                                 <p className="text-white/80">{result.nextSchedule}</p>
                             </div>
                         )}
                     </div>
-                    <div className="flex gap-3 pt-2">
+                    <div className="flex gap-3 pt-3">
                         <button onClick={resetAll}
-                            className="flex-1 bg-black/30 border border-violet-500/20 text-white font-bold py-3 rounded-xl hover:bg-violet-500/10 transition-colors">
+                            className="flex-1 bg-black/30 border border-violet-500/20 text-white font-bold py-3.5 rounded-xl hover:bg-violet-500/10 transition-colors">
                             やり直す
                         </button>
                         <button onClick={saveMinutes}
-                            className="flex-[2] bg-gradient-to-r from-violet-600 to-purple-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-violet-500/20 hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
+                            className="flex-[2] bg-gradient-to-r from-violet-600 to-purple-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-violet-500/20 hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
                             <Save className="w-5 h-5" />
                             保存する
                         </button>
@@ -517,20 +517,20 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
     // === Recording Screen ===
     if (inputMode === 'recording') {
         return (
-            <div className="bg-[#0f0a1a] rounded-2xl p-8 border border-violet-500/20 text-center relative overflow-hidden shadow-[0_0_40px_rgba(139,92,246,0.1)]">
-                <div className="absolute top-2 right-2 text-[10px] text-white/20 font-mono">{VERSION}</div>
-                <div className="mb-6">
+            <div className="bg-[#0f0a1a] rounded-2xl p-10 border border-violet-500/20 text-center relative overflow-hidden shadow-[0_0_40px_rgba(139,92,246,0.1)]">
+                <div className="absolute top-3 right-3 text-[10px] text-white/20 font-mono">{VERSION}</div>
+                <div className="mb-8">
                     <div className="text-5xl font-mono font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-purple-400">
                         {formatTime(timer)}
                     </div>
-                    <p className="text-sm text-white/60 mt-2">録音中...</p>
+                    <p className="text-sm text-white/60 mt-3">録音中...</p>
                 </div>
                 {liveTranscript && (
-                    <div className="mb-6 p-3 bg-black/40 rounded-xl border border-violet-500/10 max-h-32 overflow-y-auto">
+                    <div className="mb-8 p-4 bg-black/40 rounded-xl border border-violet-500/10 max-h-36 overflow-y-auto">
                         <p className="text-xs text-white/70 text-left whitespace-pre-wrap">{liveTranscript}</p>
                     </div>
                 )}
-                <div className="space-y-2 mb-8">
+                <div className="space-y-3 mb-10">
                     <div className="flex items-center justify-center gap-1 h-16">
                         {[...Array(15)].map((_, i) => {
                             const offset = Math.abs(7 - i) / 7;
@@ -555,51 +555,51 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
                         <Square fill="currentColor" className="w-8 h-8" />
                     </button>
                 </div>
-                <p className="text-xs text-white/40 mt-6">タップして停止</p>
+                <p className="text-xs text-white/40 mt-8">タップして停止</p>
             </div>
         );
     }
 
     // === Select Mode Screen (Default) ===
     return (
-        <div className="bg-[#0f0a1a] rounded-2xl p-8 border border-violet-500/20 text-center relative overflow-hidden shadow-[0_0_40px_rgba(139,92,246,0.1)]">
-            <div className="absolute top-2 right-2 text-[10px] text-white/20 font-mono">{VERSION}</div>
+        <div className="bg-[#0f0a1a] rounded-2xl p-10 border border-violet-500/20 text-center relative overflow-hidden shadow-[0_0_40px_rgba(139,92,246,0.1)]">
+            <div className="absolute top-3 right-3 text-[10px] text-white/20 font-mono">{VERSION}</div>
             <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-60 h-60 bg-violet-600/10 rounded-full blur-3xl" />
-            <h2 className="text-xl font-bold flex items-center justify-center gap-2 mb-8 relative z-10">
-                <span className="w-10 h-10 rounded-full bg-violet-500/20 flex items-center justify-center text-violet-400">
+            <h2 className="text-xl font-bold flex items-center justify-center gap-3 mb-10 relative z-10">
+                <span className="w-11 h-11 rounded-full bg-violet-500/20 flex items-center justify-center text-violet-400">
                     <Mic className="w-6 h-6" />
                 </span>
                 音声から議事録を作成
             </h2>
-            <div className="grid grid-cols-2 gap-4 mb-6 relative z-10">
+            <div className="grid grid-cols-2 gap-5 mb-8 relative z-10">
                 <button onClick={startRecording}
-                    className="bg-black/30 border border-violet-500/20 rounded-2xl p-6 flex flex-col items-center gap-3 hover:border-violet-500/50 hover:bg-violet-500/10 transition-all active:scale-95 group">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-violet-500/30 group-hover:scale-110 transition-transform">
+                    className="bg-black/30 border border-violet-500/20 rounded-2xl p-7 flex flex-col items-center gap-4 hover:border-violet-500/50 hover:bg-violet-500/10 transition-all active:scale-95 group">
+                    <div className="w-18 h-18 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-violet-500/30 group-hover:scale-110 transition-transform">
                         <Mic className="w-8 h-8 text-white" />
                     </div>
                     <div>
-                        <div className="text-sm font-bold text-white">録音する</div>
-                        <div className="text-[10px] text-white/50 mt-1">リアルタイム文字起こし</div>
+                        <div className="text-[15px] font-bold text-white">録音する</div>
+                        <div className="text-[11px] text-white/50 mt-1.5">リアルタイム文字起こし</div>
                     </div>
                 </button>
                 <button onClick={() => audioFileInputRef.current?.click()}
-                    className="bg-black/30 border border-violet-500/20 rounded-2xl p-6 flex flex-col items-center gap-3 hover:border-violet-500/50 hover:bg-violet-500/10 transition-all active:scale-95 group">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-purple-500/30 group-hover:scale-110 transition-transform">
+                    className="bg-black/30 border border-violet-500/20 rounded-2xl p-7 flex flex-col items-center gap-4 hover:border-violet-500/50 hover:bg-violet-500/10 transition-all active:scale-95 group">
+                    <div className="w-18 h-18 rounded-full bg-gradient-to-br from-purple-500 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-purple-500/30 group-hover:scale-110 transition-transform">
                         <Upload className="w-8 h-8 text-white" />
                     </div>
                     <div>
-                        <div className="text-sm font-bold text-white">ファイルから</div>
-                        <div className="text-[10px] text-white/50 mt-1">ボイスメモ等を共有</div>
+                        <div className="text-[15px] font-bold text-white">ファイルから</div>
+                        <div className="text-[11px] text-white/50 mt-1.5">ボイスメモ等を共有</div>
                     </div>
                 </button>
             </div>
             <input type="file" ref={audioFileInputRef} accept=".mp3,.m4a,.wav,.webm,audio/*" hidden onChange={handleAudioFileSelect} />
-            <p className="text-xs text-white/50 mb-6 relative z-10">
-                <FileAudio className="w-3 h-3 inline mr-1" />
+            <p className="text-sm text-white/50 mb-8 relative z-10">
+                <FileAudio className="w-3.5 h-3.5 inline mr-1.5" />
                 対応形式: mp3, m4a, wav
             </p>
-            <div className="border-t border-violet-500/10 pt-4 relative z-10">
-                <button onClick={onCancel} className="text-sm text-white/50 hover:text-white transition-colors">
+            <div className="border-t border-violet-500/10 pt-5 relative z-10">
+                <button onClick={onCancel} className="text-[15px] text-white/50 hover:text-white transition-colors py-2">
                     キャンセルして戻る
                 </button>
             </div>

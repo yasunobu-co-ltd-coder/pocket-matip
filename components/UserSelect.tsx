@@ -48,7 +48,7 @@ export default function UserSelect({ onSelect }: UserSelectProps) {
     ];
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 relative">
+        <div className="min-h-screen flex flex-col items-center justify-center px-7 py-14 relative">
             {/* Background ambient light */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-violet-600/[0.07] rounded-full blur-[150px]" />
@@ -56,17 +56,17 @@ export default function UserSelect({ onSelect }: UserSelectProps) {
             </div>
 
             {/* Logo */}
-            <div className="mb-14 text-center animate-fade-in-up relative z-10">
-                <div className="w-[88px] h-[88px] bg-gradient-to-br from-violet-500/20 to-purple-600/20 backdrop-blur-xl rounded-[26px] flex items-center justify-center text-[44px] mx-auto mb-6 border border-violet-400/10 shadow-[0_8px_40px_rgba(139,92,246,0.12)]">
+            <div className="mb-16 text-center animate-fade-in-up relative z-10">
+                <div className="w-[96px] h-[96px] bg-gradient-to-br from-violet-500/20 to-purple-600/20 backdrop-blur-xl rounded-[28px] flex items-center justify-center text-[48px] mx-auto mb-7 border border-violet-400/10 shadow-[0_8px_40px_rgba(139,92,246,0.12)]">
                     📱
                 </div>
-                <h1 className="text-[28px] font-extrabold text-white tracking-tight mb-1.5">Pocket Matip</h1>
-                <p className="text-white/50 text-[13px] font-medium">音声から議事録を自動生成</p>
+                <h1 className="text-[30px] font-extrabold text-white tracking-tight mb-2">Pocket Matip</h1>
+                <p className="text-white/50 text-[14px] font-medium">音声から議事録を自動生成</p>
             </div>
 
             {/* Card */}
-            <div className="w-full max-w-sm relative z-10 bg-[#0c0815]/80 backdrop-blur-xl rounded-[24px] border border-violet-500/10 p-6 shadow-[0_20px_60px_-15px_rgba(88,28,135,0.2)]">
-                <p className="text-[11px] font-bold text-white/50 uppercase tracking-[0.15em] mb-5 text-center">ユーザーを選択</p>
+            <div className="w-full max-w-sm relative z-10 bg-[#0c0815]/80 backdrop-blur-xl rounded-[24px] border border-violet-500/10 p-8 shadow-[0_20px_60px_-15px_rgba(88,28,135,0.2)]">
+                <p className="text-[12px] font-bold text-white/50 uppercase tracking-[0.15em] mb-6 text-center">ユーザーを選択</p>
 
                 {loading && (
                     <div className="flex flex-col items-center justify-center py-14 gap-3">
@@ -96,21 +96,21 @@ export default function UserSelect({ onSelect }: UserSelectProps) {
                 )}
 
                 {!loading && !error && users.length > 0 && (
-                    <div className="space-y-2.5">
+                    <div className="space-y-3">
                         {users.map((user, index) => (
                             <button
                                 key={user.id}
                                 onClick={() => onSelect(user)}
-                                className="w-full bg-white/[0.03] backdrop-blur-sm border border-violet-500/[0.06] rounded-[16px] p-4 flex items-center gap-4 hover:bg-violet-500/[0.06] hover:border-violet-500/15 transition-all duration-200 active:scale-[0.98] group"
+                                className="w-full bg-white/[0.03] backdrop-blur-sm border border-violet-500/[0.06] rounded-[18px] p-5 flex items-center gap-4 hover:bg-violet-500/[0.06] hover:border-violet-500/15 transition-all duration-200 active:scale-[0.98] group"
                             >
-                                <div className={`w-11 h-11 rounded-[12px] bg-gradient-to-br ${gradients[index % gradients.length]} flex items-center justify-center shadow-lg shadow-violet-500/15 group-hover:scale-105 transition-transform duration-200`}>
-                                    <User className="w-5 h-5 text-white" />
+                                <div className={`w-12 h-12 rounded-[14px] bg-gradient-to-br ${gradients[index % gradients.length]} flex items-center justify-center shadow-lg shadow-violet-500/15 group-hover:scale-105 transition-transform duration-200`}>
+                                    <User className="w-5.5 h-5.5 text-white" />
                                 </div>
                                 <div className="flex-1 text-left">
-                                    <div className="text-[15px] font-bold text-white">{user.name}</div>
-                                    <div className="text-[11px] text-white/50 mt-0.5">タップしてログイン</div>
+                                    <div className="text-[16px] font-bold text-white">{user.name}</div>
+                                    <div className="text-[12px] text-white/50 mt-1">タップしてログイン</div>
                                 </div>
-                                <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-violet-400 group-hover:translate-x-0.5 transition-all" />
+                                <ChevronRight className="w-5 h-5 text-white/30 group-hover:text-violet-400 group-hover:translate-x-0.5 transition-all" />
                             </button>
                         ))}
                     </div>
