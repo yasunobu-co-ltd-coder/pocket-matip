@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Loader2, User, RefreshCw } from 'lucide-react';
+import { Loader2, User, RefreshCw, ChevronRight } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 export interface UserData {
@@ -43,61 +43,75 @@ export default function UserSelect({ onSelect }: UserSelectProps) {
         fetchUsers();
     }, []);
 
+    // ユーザーごとのグラデーション色
+    const gradients = [
+        'from-violet-500 to-purple-600',
+        'from-purple-500 to-fuchsia-600',
+        'from-fuchsia-500 to-pink-600',
+        'from-indigo-500 to-violet-600',
+    ];
+
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-6">
+        <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 relative">
+            {/* Background glow */}
+            <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-violet-600/8 rounded-full blur-[120px] pointer-events-none" />
+            <div className="fixed bottom-0 right-0 w-[300px] h-[300px] bg-purple-600/5 rounded-full blur-[100px] pointer-events-none" />
+
             {/* Logo */}
-            <div className="mb-10 text-center">
-                <div className="w-20 h-20 bg-violet-500/15 backdrop-blur-md rounded-3xl flex items-center justify-center text-4xl mx-auto mb-4 border border-violet-500/20 shadow-[0_0_40px_rgba(139,92,246,0.15)]">
+            <div className="mb-12 text-center animate-fade-in-up relative z-10">
+                <div className="w-24 h-24 bg-gradient-to-br from-violet-500/20 to-purple-500/20 backdrop-blur-md rounded-[28px] flex items-center justify-center text-5xl mx-auto mb-5 border border-violet-500/15 shadow-[0_0_60px_rgba(139,92,246,0.12)]">
                     📱
                 </div>
-                <h1 className="text-3xl font-extrabold text-white tracking-tight">Pocket Matip</h1>
-                <p className="text-violet-300/60 text-sm mt-1">営業活動アシスタント</p>
+                <h1 className="text-3xl font-extrabold text-white tracking-tight mb-1">Pocket Matip</h1>
+                <p className="text-violet-300/40 text-sm">音声から議事録を自動生成</p>
             </div>
 
             {/* User Selection */}
-            <div className="w-full max-w-sm">
-                <h2 className="text-sm font-bold text-slate-400 mb-4 text-center">ユーザーを選択してください</h2>
+            <div className="w-full max-w-sm relative z-10">
+                <p className="text-xs font-semibold text-violet-300/30 uppercase tracking-widest mb-4 text-center">Select User</p>
 
                 {loading && (
-                    <div className="flex items-center justify-center py-12">
+                    <div className="flex flex-col items-center justify-center py-16 gap-3">
                         <Loader2 className="w-8 h-8 text-violet-500 animate-spin" />
+                        <p className="text-xs text-violet-300/30">読み込み中...</p>
                     </div>
                 )}
 
                 {error && (
-                    <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 text-center">
-                        <p className="text-sm text-red-400 mb-3">{error}</p>
-                        <button
-                            onClick={fetchUsers}
-                            className="text-xs text-violet-400 hover:text-violet-300 flex items-center gap-1 mx-auto"
-                        >
-                            <RefreshCw className="w-3 h-3" />
+                    <div className="bg-red-500/5 border border-red-500/15 rounded-2xl p-5 text-center">
+                        <p className="text-sm text-red-400/80 mb-4">{error}</p>
+                        <button onClick={fetchUsers}
+                            className="text-xs text-violet-400 hover:text-violet-300 flex items-center gap-1.5 mx-auto bg-violet-500/10 px-4 py-2 rounded-xl transition-colors">
+                            <RefreshCw className="w-3.5 h-3.5" />
                             再読み込み
                         </button>
                     </div>
                 )}
 
                 {!loading && !error && users.length === 0 && (
-                    <div className="text-center py-8">
+                    <div className="text-center py-12">
+                        <div className="text-4xl mb-3">👤</div>
                         <p className="text-slate-500 text-sm">ユーザーが登録されていません</p>
                     </div>
                 )}
 
                 {!loading && !error && users.length > 0 && (
                     <div className="space-y-3">
-                        {users.map((user) => (
+                        {users.map((user, index) => (
                             <button
                                 key={user.id}
                                 onClick={() => onSelect(user)}
-                                className="w-full bg-[#0f0a1a] border border-violet-500/20 rounded-2xl p-4 flex items-center gap-4 hover:border-violet-500/50 hover:bg-violet-500/5 hover:shadow-[0_0_30px_rgba(139,92,246,0.1)] transition-all active:scale-[0.98] group"
+                                className="w-full bg-[#0c0815]/80 border border-violet-500/10 rounded-2xl p-4 flex items-center gap-4 hover:border-violet-500/30 hover:bg-violet-500/5 transition-all duration-300 active:scale-[0.97] group"
+                                style={{ animationDelay: `${index * 80}ms` }}
                             >
-                                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg shadow-violet-500/20 group-hover:scale-110 transition-transform">
-                                    <User className="w-6 h-6 text-white" />
+                                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${gradients[index % gradients.length]} flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-300`}>
+                                    <User className="w-5 h-5 text-white" />
                                 </div>
-                                <div className="text-left">
-                                    <div className="text-base font-bold text-white">{user.name}</div>
-                                    <div className="text-xs text-violet-300/40">タップしてログイン</div>
+                                <div className="flex-1 text-left">
+                                    <div className="text-[15px] font-bold text-white group-hover:text-violet-100 transition-colors">{user.name}</div>
+                                    <div className="text-[11px] text-violet-300/25 mt-0.5">タップしてログイン</div>
                                 </div>
+                                <ChevronRight className="w-4 h-4 text-violet-500/20 group-hover:text-violet-400/50 group-hover:translate-x-0.5 transition-all" />
                             </button>
                         ))}
                     </div>
@@ -105,7 +119,7 @@ export default function UserSelect({ onSelect }: UserSelectProps) {
             </div>
 
             {/* Footer */}
-            <p className="text-[10px] text-violet-500/30 font-mono mt-12">Pocket Matip v8.0</p>
+            <p className="text-[10px] text-violet-500/15 font-mono mt-16 relative z-10">v8.0</p>
         </div>
     );
 }
