@@ -76,15 +76,15 @@ export default function UserSelect({ onSelect }: UserSelectProps) {
         }
         // Check all related tables for user data
         const tables = [
-            { name: 'pocket-matip', label: 'Pocket Matip議事録' },
-            { name: 'matip-memo', label: 'Matip Memo' },
-            { name: 'matip-memo-unread', label: 'Matip Memo未読' },
+            { name: 'pocket-matip', column: 'user_id', value: user.id, label: 'Pocket Matip議事録' },
+            { name: 'matip-memo', column: 'created_by', value: user.name, label: 'Matip Memo' },
+            { name: 'matip-memo-unread', column: 'user_name', value: user.name, label: 'Matip Memo未読' },
         ];
         for (const table of tables) {
             const { count } = await supabase
                 .from(table.name)
                 .select('*', { count: 'exact', head: true })
-                .eq('user_id', user.id);
+                .eq(table.column, table.value);
             if (count && count > 0) {
                 alert(`${user.name} さんには ${table.label} に ${count} 件のデータがあるため削除できません`);
                 return;
