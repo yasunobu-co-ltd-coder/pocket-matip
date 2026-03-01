@@ -34,7 +34,7 @@ export default function RootLayout({
         />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
-      <body className="max-w-[480px] mx-auto">{children}</body>
+      <body className="max-w-[520px] mx-auto min-h-screen relative">{children}</body>
     </html>
   );
 }
