@@ -252,7 +252,7 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
         const transcript = finalTranscriptRef.current.trim() || liveTranscript.trim();
         if (transcript) {
             setEditableTranscript(transcript);
-            setShowTranscript(true);
+            generateMinutes(transcript);
         } else {
             alert('音声が認識できませんでした。もう一度お試しください。');
             setInputMode('select');
@@ -332,7 +332,7 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
 
             if (transcript.trim()) {
                 setEditableTranscript(transcript.trim());
-                setShowTranscript(true);
+                generateMinutes(transcript.trim());
             } else {
                 alert('音声を認識できませんでした。ファイルを確認してください。');
                 setInputMode('select');
@@ -347,9 +347,10 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
         }
     };
 
-    // 議事録生成
-    const generateMinutes = async () => {
-        if (!editableTranscript.trim()) {
+    // 議事録生成（引数があればそちらを使用、なければ editableTranscript）
+    const generateMinutes = async (transcriptText?: string) => {
+        const text = transcriptText || editableTranscript;
+        if (!text.trim()) {
             alert('文字起こしテキストがありません');
             return;
         }
@@ -360,7 +361,7 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
             const resp = await fetch("/api/generate-minutes", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ transcript: editableTranscript, chunkCount: 1 })
+                body: JSON.stringify({ transcript: text, chunkCount: 1 })
             });
 
             if (!resp.ok) {
@@ -482,7 +483,7 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
                             className="w-full h-56 bg-slate-50 border border-slate-200 rounded-[12px] p-4 text-[14px] text-slate-700 leading-[1.6] focus:border-violet-400 focus:bg-white focus:shadow-[0_0_0_4px_rgba(124,58,237,0.1)] outline-none resize-none placeholder-slate-300 transition-all"
                             placeholder="文字起こし結果..."
                         />
-                        <button onClick={generateMinutes}
+                        <button onClick={() => generateMinutes()}
                             className="w-full text-white font-bold py-4 rounded-[14px] shadow-[0_4px_12px_rgba(124,58,237,0.3)] active:scale-[0.97] transition-transform text-[16px]"
                             style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)' }}>
                             議事録にまとめる
