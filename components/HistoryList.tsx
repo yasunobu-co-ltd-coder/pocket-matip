@@ -93,19 +93,19 @@ export default function HistoryList({ userId, refreshTrigger }: HistoryListProps
         <div className="space-y-2">
             {records.map((record) => (
                 <div key={record.id}
-                    className="bg-white/[0.02] backdrop-blur-sm rounded-[14px] p-4 border border-violet-500/[0.06] hover:border-violet-500/12 hover:bg-violet-500/[0.03] transition-all duration-200">
-                    <div className="flex items-start gap-3">
-                        <div className="w-9 h-9 rounded-[10px] bg-gradient-to-br from-violet-500/10 to-purple-500/10 flex items-center justify-center flex-shrink-0 border border-violet-500/[0.06]">
-                            <FileText className="w-4 h-4 text-violet-400/50" />
+                    className="bg-white/[0.02] backdrop-blur-sm rounded-[16px] p-4.5 border border-violet-500/[0.06] hover:border-violet-500/12 hover:bg-violet-500/[0.03] transition-all duration-200">
+                    <div className="flex items-start gap-3.5">
+                        <div className="w-11 h-11 rounded-[12px] bg-gradient-to-br from-violet-500/10 to-purple-500/10 flex items-center justify-center flex-shrink-0 border border-violet-500/[0.06]">
+                            <FileText className="w-5 h-5 text-violet-400/50" />
                         </div>
                         <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between gap-2 mb-1">
-                                <span className="text-[14px] font-bold text-white/85 truncate">{record.client_name || '名称なし'}</span>
-                                <span className="text-[10px] text-violet-400/25 flex-shrink-0 bg-violet-500/[0.05] px-2 py-0.5 rounded-md">
+                            <div className="flex items-center justify-between gap-2 mb-1.5">
+                                <span className="text-[15px] font-bold text-white/85 truncate">{record.client_name || '名称なし'}</span>
+                                <span className="text-[11px] text-violet-400/30 flex-shrink-0 bg-violet-500/[0.05] px-2.5 py-1 rounded-md">
                                     {formatDate(record.created_at)}
                                 </span>
                             </div>
-                            <p className="text-[12px] text-slate-400/50 line-clamp-2 leading-[1.6]">{record.summary}</p>
+                            <p className="text-[13px] text-slate-400/50 line-clamp-2 leading-[1.6]">{record.summary}</p>
                         </div>
                     </div>
                 </div>
