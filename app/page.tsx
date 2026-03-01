@@ -56,24 +56,24 @@ export default function Page() {
       </header>
 
       {/* ===== MAIN CONTENT ===== */}
-      <main className="flex-1 px-6 pt-8 pb-8">
+      <main className="flex-1 px-7 pt-10 pb-10">
 
         {/* ===== HOME TAB ===== */}
         {activeTab === 'home' && mode === 'idle' && (
-          <div className="space-y-10 animate-fade-in-up">
+          <div className="space-y-12 animate-fade-in-up">
 
             {/* Hero CTA */}
             <button
               onClick={() => setMode('voice')}
               className="w-full bg-white rounded-[20px] border border-slate-200 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05),0_8px_10px_-6px_rgba(0,0,0,0.01)] hover:shadow-[0_10px_25px_-5px_rgba(124,58,237,0.15)] hover:border-violet-200 transition-all duration-200 active:scale-[0.98] group"
             >
-              <div className="flex items-center gap-6 p-9">
+              <div className="flex items-center gap-6 px-8 py-10">
                 <div className="w-[72px] h-[72px] rounded-[20px] bg-gradient-to-br from-violet-600 to-violet-800 flex items-center justify-center shadow-[0_6px_20px_rgba(124,58,237,0.35)] group-hover:scale-105 transition-transform flex-shrink-0">
                   <Plus className="w-8 h-8 text-white" />
                 </div>
                 <div className="text-left flex-1">
                   <div className="text-[19px] font-bold text-slate-800">新しい議事録を作成</div>
-                  <div className="text-[14px] text-slate-400 mt-1.5">録音 or ファイルアップロード</div>
+                  <div className="text-[14px] text-slate-400 mt-2">録音 or ファイルアップロード</div>
                 </div>
                 <ChevronRight className="w-6 h-6 text-slate-300 group-hover:text-violet-400 group-hover:translate-x-1 transition-all flex-shrink-0" />
               </div>
@@ -81,7 +81,7 @@ export default function Page() {
 
             {/* Recent Records Section */}
             <section>
-              <div className="flex items-center justify-between mb-6 px-1">
+              <div className="flex items-center justify-between mb-8 px-1">
                 <h2 className="text-[13px] font-bold text-slate-400 uppercase tracking-[0.5px] flex items-center gap-2">
                   <Clock className="w-4 h-4" />
                   最近の記録
@@ -93,7 +93,7 @@ export default function Page() {
                 </button>
               </div>
               <div className="bg-white rounded-[20px] border border-slate-200 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05),0_8px_10px_-6px_rgba(0,0,0,0.01)]">
-                <div className="max-h-[420px] overflow-y-auto p-5">
+                <div className="max-h-[500px] overflow-y-auto p-6">
                   <HistoryList userId={currentUser.id} userName={currentUser.name} refreshTrigger={refreshTrigger} />
                 </div>
               </div>
@@ -115,12 +115,12 @@ export default function Page() {
 
         {/* ===== HISTORY TAB ===== */}
         {activeTab === 'history' && mode === 'idle' && (
-          <div className="space-y-6 animate-fade-in-up">
+          <div className="space-y-8 animate-fade-in-up">
             <div className="px-1">
               <h2 className="text-[13px] font-bold text-slate-400 uppercase tracking-[0.5px]">全履歴</h2>
             </div>
             <div className="bg-white rounded-[20px] border border-slate-200 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05),0_8px_10px_-6px_rgba(0,0,0,0.01)] min-h-[400px]">
-              <div className="p-5">
+              <div className="p-6">
                 <HistoryList userId={currentUser.id} userName={currentUser.name} refreshTrigger={refreshTrigger} />
               </div>
             </div>

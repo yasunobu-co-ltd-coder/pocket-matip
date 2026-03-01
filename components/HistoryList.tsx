@@ -165,12 +165,12 @@ export default function HistoryList({ userId, userName, refreshTrigger }: Histor
     return (
         <>
             {/* Filter buttons */}
-            <div className="flex gap-3 px-1 pt-2 pb-6">
+            <div className="flex gap-4 px-1 pt-2 pb-8">
                 {(['全件', '自分の作成'] as Filter[]).map(f => (
                     <button
                         key={f}
                         onClick={() => setFilter(f)}
-                        className="transition-all text-[14px] font-semibold px-6 py-3 rounded-full hover:shadow-[0_2px_8px_rgba(124,58,237,0.15)]"
+                        className="transition-all text-[15px] font-semibold px-7 py-3.5 rounded-full hover:shadow-[0_2px_8px_rgba(124,58,237,0.15)]"
                         style={{
                             background: filter === f ? '#7c3aed' : '#fff',
                             color: filter === f ? '#fff' : '#64748b',
@@ -187,21 +187,21 @@ export default function HistoryList({ userId, userName, refreshTrigger }: Histor
                 {filtered.map((record) => (
                     <div key={record.id}
                         onClick={() => setSelectedRecord(record)}
-                        className="rounded-[16px] px-5 py-6 mb-4 border border-slate-100 hover:border-violet-100 hover:bg-violet-50/30 transition-all duration-150 cursor-pointer active:scale-[0.99]">
-                        <div className="flex items-start gap-4">
+                        className="rounded-[16px] px-6 py-7 mb-5 border border-slate-100 hover:border-violet-100 hover:bg-violet-50/30 transition-all duration-150 cursor-pointer active:scale-[0.99]">
+                        <div className="flex items-start gap-5">
                             <div className="w-12 h-12 rounded-[12px] bg-violet-50 flex items-center justify-center flex-shrink-0 mt-0.5 border border-violet-100">
                                 <FileText className="w-5 h-5 text-violet-500" />
                             </div>
                             <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between gap-3 mb-2.5">
+                                <div className="flex items-center justify-between gap-3 mb-3">
                                     <span className="text-[17px] font-bold text-slate-800 truncate">{record.client_name || '名称なし'}</span>
-                                    <span className="text-[12px] text-slate-400 flex-shrink-0 font-medium bg-slate-50 border border-slate-100 px-3 py-1 rounded-lg">
+                                    <span className="text-[12px] text-slate-400 flex-shrink-0 font-medium bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-lg">
                                         {formatDateShort(record.created_at)}
                                     </span>
                                 </div>
-                                <p className="text-[14px] text-slate-500 line-clamp-2 leading-[1.7]">{record.summary}</p>
+                                <p className="text-[14px] text-slate-500 line-clamp-2 leading-[1.8]">{record.summary}</p>
                                 {/* Creator & timestamp */}
-                                <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
+                                <div className="flex items-center justify-between mt-5 pt-5 border-t border-slate-100">
                                     <span className="flex items-center gap-1.5 text-[12px] text-slate-400">
                                         <span className="w-[6px] h-[6px] rounded-full" style={{ background: record.user_id === userId ? '#7c3aed' : '#cbd5e1' }} />
                                         {record.user_name}
