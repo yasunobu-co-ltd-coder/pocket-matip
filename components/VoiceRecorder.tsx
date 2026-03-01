@@ -5,7 +5,7 @@ import { Mic, Square, Save, Loader2, Check, Upload, FileAudio } from 'lucide-rea
 import { supabase } from '@/lib/supabase';
 
 interface VoiceRecorderProps {
-    userId: number;
+    userId: string;
     userName: string;
     onSaved: () => void;
     onCancel: () => void;

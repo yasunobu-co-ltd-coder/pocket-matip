@@ -5,7 +5,7 @@ import { Loader2, FileText } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 interface HistoryListProps {
-    userId: number;
+    userId: string;
     refreshTrigger: number;
 }
 

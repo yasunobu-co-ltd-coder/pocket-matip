@@ -5,7 +5,7 @@ import { Loader2, User, RefreshCw } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 export interface UserData {
-    id: number;
+    id: string;
     name: string;
     [key: string]: unknown;
 }
