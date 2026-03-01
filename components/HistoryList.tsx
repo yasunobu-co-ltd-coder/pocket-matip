@@ -69,11 +69,20 @@ export default function HistoryList({ userId, userName, refreshTrigger }: Histor
             result = result.filter(r => r.user_id === userId);
         }
         if (searchQuery.trim()) {
-            const q = searchQuery.trim().toLowerCase();
-            result = result.filter(r =>
-                (r.client_name || '').toLowerCase().includes(q) ||
-                (r.summary || '').toLowerCase().includes(q)
-            );
+            const terms = searchQuery.trim().toLowerCase().split(/\s+/);
+            result = result.filter(r => {
+                const text = [
+                    r.client_name,
+                    r.summary,
+                    r.transcript,
+                    r.user_name,
+                    r.next_schedule,
+                    ...(r.decisions || []),
+                    ...(r.todos || []),
+                    ...(r.keywords || []),
+                ].filter(Boolean).join(' ').toLowerCase();
+                return terms.every(t => text.includes(t));
+            });
         }
         return result;
     }, [records, filter, userId, searchQuery]);
