@@ -184,7 +184,7 @@ export default function UserSelect({ onSelect }: UserSelectProps) {
                         <button
                             onClick={handleAddUser}
                             disabled={isAdding || !newUserName.trim()}
-                            className="bg-violet-600 text-white rounded-[12px] px-4 py-3 font-bold text-[14px] hover:bg-violet-700 transition-colors active:scale-95 disabled:opacity-50 flex items-center gap-1.5"
+                            className="flex-shrink-0 bg-violet-600 text-white rounded-[12px] px-4 py-3 font-bold text-[14px] hover:bg-violet-700 transition-colors active:scale-95 disabled:opacity-50 flex items-center gap-1.5 whitespace-nowrap"
                         >
                             {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                             追加
