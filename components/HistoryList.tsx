@@ -137,7 +137,7 @@ export default function HistoryList({ userId, userName, refreshTrigger }: Histor
     if (loading) {
         return (
             <div className="flex items-center justify-center py-12">
-                <Loader2 className="w-5 h-5 text-violet-500 animate-spin" />
+                <Loader2 className="w-6 h-6 text-violet-500 animate-spin" />
             </div>
         );
     }
@@ -145,7 +145,7 @@ export default function HistoryList({ userId, userName, refreshTrigger }: Histor
     if (error) {
         return (
             <div className="py-8 px-2">
-                <p className="text-[13px] text-red-600 bg-red-50 rounded-xl py-3 px-4 border border-red-100 text-center">{error}</p>
+                <p className="text-[14px] text-red-600 bg-red-50 rounded-xl py-4 px-5 border border-red-100 text-center">{error}</p>
             </div>
         );
     }
@@ -153,11 +153,11 @@ export default function HistoryList({ userId, userName, refreshTrigger }: Histor
     if (records.length === 0) {
         return (
             <div className="text-center py-16">
-                <div className="w-14 h-14 bg-slate-50 rounded-[14px] flex items-center justify-center mx-auto mb-4 border border-slate-100">
-                    <FileText className="w-6 h-6 text-slate-300" />
+                <div className="w-16 h-16 bg-slate-50 rounded-[16px] flex items-center justify-center mx-auto mb-4 border border-slate-100">
+                    <FileText className="w-7 h-7 text-slate-300" />
                 </div>
-                <p className="text-slate-500 text-[14px] font-medium">まだ記録がありません</p>
-                <p className="text-slate-300 text-[12px] mt-2">議事録を作成すると表示されます</p>
+                <p className="text-slate-500 text-[16px] font-medium">まだ記録がありません</p>
+                <p className="text-slate-300 text-[13px] mt-2">議事録を作成すると表示されます</p>
             </div>
         );
     }
@@ -170,7 +170,7 @@ export default function HistoryList({ userId, userName, refreshTrigger }: Histor
                     <button
                         key={f}
                         onClick={() => setFilter(f)}
-                        className="transition-all text-[13px] font-semibold px-4 py-2 rounded-full hover:shadow-[0_2px_8px_rgba(124,58,237,0.15)]"
+                        className="transition-all text-[14px] font-semibold px-5 py-2.5 rounded-full hover:shadow-[0_2px_8px_rgba(124,58,237,0.15)]"
                         style={{
                             background: filter === f ? '#7c3aed' : '#fff',
                             color: filter === f ? '#fff' : '#64748b',
@@ -189,24 +189,24 @@ export default function HistoryList({ userId, userName, refreshTrigger }: Histor
                         onClick={() => setSelectedRecord(record)}
                         className="rounded-[16px] px-5 py-5 mb-2 border border-transparent hover:border-violet-100 hover:bg-violet-50/30 transition-all duration-150 cursor-pointer active:scale-[0.99]">
                         <div className="flex items-start gap-4">
-                            <div className="w-11 h-11 rounded-[12px] bg-violet-50 flex items-center justify-center flex-shrink-0 mt-0.5 border border-violet-100">
-                                <FileText className="w-[18px] h-[18px] text-violet-500" />
+                            <div className="w-12 h-12 rounded-[12px] bg-violet-50 flex items-center justify-center flex-shrink-0 mt-0.5 border border-violet-100">
+                                <FileText className="w-5 h-5 text-violet-500" />
                             </div>
                             <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between gap-3 mb-1">
-                                    <span className="text-[15px] font-bold text-slate-800 truncate">{record.client_name || '名称なし'}</span>
-                                    <span className="text-[11px] text-slate-400 flex-shrink-0 font-medium bg-slate-50 border border-slate-100 px-2.5 py-0.5 rounded-lg">
+                                <div className="flex items-center justify-between gap-3 mb-1.5">
+                                    <span className="text-[17px] font-bold text-slate-800 truncate">{record.client_name || '名称なし'}</span>
+                                    <span className="text-[12px] text-slate-400 flex-shrink-0 font-medium bg-slate-50 border border-slate-100 px-3 py-1 rounded-lg">
                                         {formatDateShort(record.created_at)}
                                     </span>
                                 </div>
-                                <p className="text-[13px] text-slate-500 line-clamp-2 leading-[1.6]">{record.summary}</p>
+                                <p className="text-[14px] text-slate-500 line-clamp-2 leading-[1.6]">{record.summary}</p>
                                 {/* Creator & timestamp */}
                                 <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
-                                    <span className="flex items-center gap-1.5 text-[11px] text-slate-400">
+                                    <span className="flex items-center gap-1.5 text-[12px] text-slate-400">
                                         <span className="w-[6px] h-[6px] rounded-full" style={{ background: record.user_id === userId ? '#7c3aed' : '#cbd5e1' }} />
                                         {record.user_name}
                                     </span>
-                                    <span className="text-[11px] text-slate-300">{formatTimestamp(record.created_at)}</span>
+                                    <span className="text-[12px] text-slate-300">{formatTimestamp(record.created_at)}</span>
                                 </div>
                             </div>
                         </div>
@@ -214,7 +214,7 @@ export default function HistoryList({ userId, userName, refreshTrigger }: Histor
                 ))}
                 {filtered.length === 0 && (
                     <div className="text-center py-10">
-                        <p className="text-slate-400 text-[13px]">該当する記録がありません</p>
+                        <p className="text-slate-400 text-[14px]">該当する記録がありません</p>
                     </div>
                 )}
             </div>
@@ -223,19 +223,19 @@ export default function HistoryList({ userId, userName, refreshTrigger }: Histor
             {selectedRecord && (
                 <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-5"
                     onClick={(e) => { if (e.target === e.currentTarget) { setSelectedRecord(null); setIsEditing(false); } }}>
-                    <div className="bg-white rounded-[20px] w-full max-w-[400px] max-h-[80vh] overflow-y-auto shadow-xl">
+                    <div className="bg-white rounded-[20px] w-full max-w-[440px] max-h-[80vh] overflow-y-auto shadow-xl">
                         {/* Header */}
-                        <div className="sticky top-0 bg-white rounded-t-[20px] px-6 pt-5 pb-4 border-b border-slate-100 flex items-center justify-between">
-                            <h2 className="text-[18px] font-bold text-slate-800">議事録詳細</h2>
+                        <div className="sticky top-0 bg-white rounded-t-[20px] px-6 pt-6 pb-4 border-b border-slate-100 flex items-center justify-between">
+                            <h2 className="text-[20px] font-bold text-slate-800">議事録詳細</h2>
                             <button onClick={() => { setSelectedRecord(null); setIsEditing(false); }}
-                                className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition-colors">
-                                <X className="w-4 h-4 text-slate-500" />
+                                className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition-colors">
+                                <X className="w-5 h-5 text-slate-500" />
                             </button>
                         </div>
 
                         <div className="p-6 space-y-5">
                             {/* Timestamp */}
-                            <div className="text-[12px] text-slate-400 font-medium">
+                            <div className="text-[13px] text-slate-400 font-medium">
                                 作成: {formatTimestamp(selectedRecord.created_at)}
                             </div>
 
@@ -243,24 +243,24 @@ export default function HistoryList({ userId, userName, refreshTrigger }: Histor
                                 /* ===== Edit Mode ===== */
                                 <>
                                     <div>
-                                        <label className="block text-[12px] font-bold text-slate-400 uppercase tracking-[0.5px] mb-2">顧客名</label>
+                                        <label className="block text-[13px] font-bold text-slate-400 uppercase tracking-[0.5px] mb-2">顧客名</label>
                                         <input type="text" value={editClientName} onChange={(e) => setEditClientName(e.target.value)}
-                                            className="w-full bg-slate-50 border border-slate-200 rounded-[12px] px-4 py-3.5 text-[16px] text-slate-700 focus:border-violet-400 focus:bg-white focus:shadow-[0_0_0_4px_rgba(124,58,237,0.1)] outline-none transition-all" />
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-[12px] px-4 py-4 text-[16px] text-slate-700 focus:border-violet-400 focus:bg-white focus:shadow-[0_0_0_4px_rgba(124,58,237,0.1)] outline-none transition-all" />
                                     </div>
                                     <div>
-                                        <label className="block text-[12px] font-bold text-slate-400 uppercase tracking-[0.5px] mb-2">内容</label>
+                                        <label className="block text-[13px] font-bold text-slate-400 uppercase tracking-[0.5px] mb-2">内容</label>
                                         <textarea value={editSummary} onChange={(e) => setEditSummary(e.target.value)} rows={8}
-                                            className="w-full bg-slate-50 border border-slate-200 rounded-[12px] px-4 py-3.5 text-[14px] text-slate-700 leading-[1.6] focus:border-violet-400 focus:bg-white focus:shadow-[0_0_0_4px_rgba(124,58,237,0.1)] outline-none resize-none transition-all" />
+                                            className="w-full bg-slate-50 border border-slate-200 rounded-[12px] px-4 py-4 text-[15px] text-slate-700 leading-[1.6] focus:border-violet-400 focus:bg-white focus:shadow-[0_0_0_4px_rgba(124,58,237,0.1)] outline-none resize-none transition-all" />
                                     </div>
                                     <div className="flex gap-3">
                                         <button onClick={cancelEdit}
-                                            className="flex-1 bg-slate-100 text-slate-600 font-semibold py-3.5 rounded-[12px] transition-colors hover:bg-slate-200">
+                                            className="flex-1 bg-slate-100 text-slate-600 font-bold py-4 rounded-[14px] text-[15px] transition-colors hover:bg-slate-200">
                                             キャンセル
                                         </button>
                                         <button onClick={saveEdit} disabled={isSaving}
-                                            className="flex-1 text-white font-semibold py-3.5 rounded-[12px] transition-transform active:scale-[0.97] flex items-center justify-center gap-2 disabled:opacity-50"
+                                            className="flex-1 text-white font-bold py-4 rounded-[14px] text-[15px] transition-transform active:scale-[0.97] flex items-center justify-center gap-2 disabled:opacity-50"
                                             style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)' }}>
-                                            {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                                            {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                                             保存
                                         </button>
                                     </div>
@@ -270,25 +270,25 @@ export default function HistoryList({ userId, userName, refreshTrigger }: Histor
                                 <>
                                     {/* Client name */}
                                     <div>
-                                        <label className="block text-[12px] font-bold text-slate-400 uppercase tracking-[0.5px] mb-1">顧客名</label>
-                                        <p className="text-[17px] font-bold text-slate-800">{selectedRecord.client_name || '名称なし'}</p>
+                                        <label className="block text-[13px] font-bold text-slate-400 uppercase tracking-[0.5px] mb-1">顧客名</label>
+                                        <p className="text-[19px] font-bold text-slate-800">{selectedRecord.client_name || '名称なし'}</p>
                                     </div>
 
                                     {/* Creator */}
                                     <div className="flex items-center gap-2">
-                                        <User className="w-3.5 h-3.5 text-slate-400" />
-                                        <span className="text-[13px] text-slate-500">{selectedRecord.user_name}</span>
+                                        <User className="w-4 h-4 text-slate-400" />
+                                        <span className="text-[14px] text-slate-500">{selectedRecord.user_name}</span>
                                     </div>
 
                                     {/* Summary */}
                                     <div>
-                                        <label className="block text-[12px] font-bold text-slate-400 uppercase tracking-[0.5px] mb-2">内容</label>
-                                        <p className="text-[14px] text-slate-600 leading-[1.6] whitespace-pre-wrap">{selectedRecord.summary}</p>
+                                        <label className="block text-[13px] font-bold text-slate-400 uppercase tracking-[0.5px] mb-2">内容</label>
+                                        <p className="text-[15px] text-slate-600 leading-[1.7] whitespace-pre-wrap">{selectedRecord.summary}</p>
                                     </div>
 
                                     {/* Edit button */}
                                     <button onClick={() => startEdit(selectedRecord)}
-                                        className="w-full bg-slate-100 text-slate-600 font-semibold py-4 rounded-[14px] text-[14px] hover:bg-violet-50 hover:text-violet-600 transition-all active:scale-[0.97]">
+                                        className="w-full bg-slate-100 text-slate-600 font-bold py-4 rounded-[14px] text-[15px] hover:bg-violet-50 hover:text-violet-600 transition-all active:scale-[0.97]">
                                         編集する
                                     </button>
                                 </>
