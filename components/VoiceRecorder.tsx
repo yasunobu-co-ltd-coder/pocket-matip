@@ -299,6 +299,26 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
         return transcript;
     };
 
+    // サーバーサイドで音声分割・文字起こし（m4a等でクライアント側デコード失敗時のフォールバック）
+    const transcribeServerSide = async (file: File): Promise<string> => {
+        setProcessStep('サーバーで音声ファイルを変換・文字起こし中...');
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const resp = await fetch('/api/transcribe-large', {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (!resp.ok) {
+            const errData = await resp.json().catch(() => ({ error: 'Unknown error' }));
+            throw new Error(errData.error || `サーバー処理失敗 (${resp.status})`);
+        }
+
+        const data = await resp.json();
+        return data.text || '';
+    };
+
     const handleAudioFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -306,13 +326,13 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
         const allowedExtensions = ['.mp3', '.m4a', '.wav', '.webm'];
         const ext = '.' + file.name.split('.').pop()?.toLowerCase();
         if (!allowedExtensions.includes(ext)) {
-            alert('対応していないファイル形式です。\nmp3, m4a, wav ファイルをお選びください。');
+            alert('対応していないファイル形式です。\nmp3, m4a, wav, webm ファイルをお選びください。');
             return;
         }
 
-        const MAX_FILE_SIZE = 200 * 1024 * 1024;
+        const MAX_FILE_SIZE = 400 * 1024 * 1024;
         if (file.size > MAX_FILE_SIZE) {
-            alert(`ファイルサイズが大きすぎます（${(file.size / 1024 / 1024).toFixed(0)}MB）。\n200MB以下のファイルをお選びください。`);
+            alert(`ファイルサイズが大きすぎます（${(file.size / 1024 / 1024).toFixed(0)}MB）。\n400MB以下のファイルをお選びください。`);
             return;
         }
 
@@ -327,7 +347,12 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
             if (file.size <= 24 * 1024 * 1024) {
                 transcript = await transcribeSingleFile(file);
             } else {
-                transcript = await transcribeWithChunking(file);
+                try {
+                    transcript = await transcribeWithChunking(file);
+                } catch (chunkError) {
+                    console.warn('クライアント側の音声分割に失敗、サーバーで処理します:', chunkError);
+                    transcript = await transcribeServerSide(file);
+                }
             }
 
             if (transcript.trim()) {
@@ -671,7 +696,7 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
 
             <p className="text-[12px] text-slate-300 text-center flex items-center justify-center gap-1.5 pt-2">
                 <FileAudio className="w-3 h-3" />
-                対応形式: mp3, m4a, wav (最大200MB)
+                対応形式: mp3, m4a, wav, webm (最大400MB)
             </p>
         </div>
     );
