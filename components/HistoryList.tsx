@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Loader2, FileText, X, Save, User, Search } from 'lucide-react';
+import { Loader2, FileText, X, Save, User, Search, Trash2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 type Filter = '全件' | '自分の作成';
@@ -40,6 +40,7 @@ export default function HistoryList({ userId, userName, refreshTrigger, initialS
     const [editClientName, setEditClientName] = useState('');
     const [editSummary, setEditSummary] = useState('');
     const [isSaving, setIsSaving] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         const fetchRecords = async () => {
@@ -315,11 +316,36 @@ export default function HistoryList({ userId, userName, refreshTrigger, initialS
                                         <p className="text-[15px] text-slate-600 leading-[1.8] whitespace-pre-wrap">{selectedRecord.summary}</p>
                                     </div>
 
-                                    {/* Edit button */}
-                                    <div className="pt-2">
+                                    {/* Edit / Delete buttons */}
+                                    <div className="pt-2 space-y-3">
                                         <button onClick={() => startEdit(selectedRecord)}
                                             className="w-full bg-slate-100 text-slate-600 font-bold py-4 rounded-[14px] text-[15px] hover:bg-violet-50 hover:text-violet-600 transition-all active:scale-[0.97]">
                                             編集する
+                                        </button>
+                                        <button
+                                            onClick={async () => {
+                                                if (!confirm('この議事録をデータベースから完全に削除します。\nこの操作は取り消せません。\n\n本当に削除しますか？')) return;
+                                                setIsDeleting(true);
+                                                try {
+                                                    const { error: deleteError } = await supabase
+                                                        .from('pocket-matip')
+                                                        .delete()
+                                                        .eq('id', selectedRecord.id);
+                                                    if (deleteError) throw deleteError;
+                                                    setRecords(records.filter(r => r.id !== selectedRecord.id));
+                                                    setSelectedRecord(null);
+                                                } catch (e: unknown) {
+                                                    console.error('Delete error:', e);
+                                                    const msg = e instanceof Error ? e.message : '削除エラー';
+                                                    alert('削除失敗: ' + msg);
+                                                } finally {
+                                                    setIsDeleting(false);
+                                                }
+                                            }}
+                                            disabled={isDeleting}
+                                            className="w-full bg-red-50 text-red-500 font-bold py-4 rounded-[14px] text-[15px] hover:bg-red-100 transition-all active:scale-[0.97] flex items-center justify-center gap-2 disabled:opacity-50 border border-red-100">
+                                            {isDeleting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trash2 className="w-5 h-5" />}
+                                            削除する
                                         </button>
                                     </div>
                                 </>

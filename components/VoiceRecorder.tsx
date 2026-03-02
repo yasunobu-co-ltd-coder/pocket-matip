@@ -240,7 +240,7 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
         }
     };
 
-    const stopRecording = () => {
+    const stopRecording = async () => {
         setIsRecording(false);
         stopTimer();
         stopAudioLevelMonitoring();
@@ -252,7 +252,9 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
         const transcript = finalTranscriptRef.current.trim() || liveTranscript.trim();
         if (transcript) {
             setEditableTranscript(transcript);
-            generateMinutes(transcript);
+            setIsProcessing(true);
+            setProcessStep('議事録を作成中...');
+            await generateMinutes(transcript);
         } else {
             alert('音声が認識できませんでした。もう一度お試しください。');
             setInputMode('select');
@@ -359,17 +361,18 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
 
             if (transcript.trim()) {
                 setEditableTranscript(transcript.trim());
-                generateMinutes(transcript.trim());
+                setProcessStep('議事録を作成中...');
+                await generateMinutes(transcript.trim());
             } else {
                 alert('音声を認識できませんでした。ファイルを確認してください。');
                 setInputMode('select');
+                setIsProcessing(false);
             }
         } catch (e: unknown) {
             console.error('Upload transcription error:', e);
             const msg = e instanceof Error ? e.message : 'Unknown error';
             alert('文字起こしエラー: ' + msg);
             setInputMode('select');
-        } finally {
             setIsProcessing(false);
         }
     };
