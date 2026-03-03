@@ -136,9 +136,10 @@ export default function UserSelect({ onSelect }: UserSelectProps) {
         setError(null);
         try {
             const { data, error: fetchError } = await supabase
-                .from('user')
-                .select('*')
-                .order('sort_order', { ascending: true });
+                .from('users')
+                .select('id,name,sort_order,created_at')
+                .order('sort_order')
+                .order('created_at');
             if (fetchError) throw fetchError;
             setUsers(data || []);
         } catch (e: unknown) {
@@ -163,9 +164,9 @@ export default function UserSelect({ onSelect }: UserSelectProps) {
         try {
             const maxOrder = users.reduce((max, u) => Math.max(max, (u.sort_order ?? 0)), -1);
             const { data, error: insertError } = await supabase
-                .from('user')
+                .from('users')
                 .insert([{ name, sort_order: maxOrder + 1 }])
-                .select()
+                .select('id,name,sort_order,created_at')
                 .single();
             if (insertError) throw insertError;
             setUsers(prev => [...prev, data]);
@@ -202,7 +203,7 @@ export default function UserSelect({ onSelect }: UserSelectProps) {
         if (!confirm(`${user.name} さんを削除しますか？`)) return;
         try {
             const { error: deleteError } = await supabase
-                .from('user')
+                .from('users')
                 .delete()
                 .eq('id', user.id);
             if (deleteError) throw deleteError;
@@ -227,7 +228,7 @@ export default function UserSelect({ onSelect }: UserSelectProps) {
 
         // Persist new order to Supabase
         const updates = reordered.map((u, i) =>
-            supabase.from('user').update({ sort_order: i }).eq('id', u.id)
+            supabase.from('users').update({ sort_order: i }).eq('id', u.id)
         );
         await Promise.all(updates);
     };
