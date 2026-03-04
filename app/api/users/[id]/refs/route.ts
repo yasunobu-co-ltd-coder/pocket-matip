@@ -18,7 +18,7 @@ export async function GET(
       supabaseAdmin.from('matip-memo').select('*', { count: 'exact', head: true }).eq('assignee', userId),
       supabaseAdmin.from('matip-memo-unread').select('*', { count: 'exact', head: true }).eq('user_id', userId),
       supabaseAdmin.from('push_subscriptions').select('*', { count: 'exact', head: true }).eq('user_id', userId),
-      supabaseAdmin.from('notification_log').select('*', { count: 'exact', head: true }).eq('triggered_by_user_id', userId),
+      supabaseAdmin.from('notification_logs').select('*', { count: 'exact', head: true }).eq('triggered_by_user_id', userId),
     ];
 
     const results = await Promise.all(queries);
