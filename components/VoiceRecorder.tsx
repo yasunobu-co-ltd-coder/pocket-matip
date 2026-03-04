@@ -140,36 +140,58 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
     };
 
     const smoothedLevelRef = useRef<number>(0);
+    const barLevelsRef = useRef<number[]>(new Array(32).fill(0));
 
     const startAudioLevelMonitoring = (stream: MediaStream) => {
         const audioContext = new AudioContext();
         const analyser = audioContext.createAnalyser();
         const microphone = audioContext.createMediaStreamSource(stream);
         analyser.fftSize = 256;
-        analyser.smoothingTimeConstant = 0.3;
-        const bufferLength = analyser.fftSize;
-        const dataArray = new Uint8Array(bufferLength);
+        analyser.smoothingTimeConstant = 0.4;
+        const bufferLength = analyser.frequencyBinCount;
+        const freqData = new Uint8Array(bufferLength);
         microphone.connect(analyser);
         audioContextRef.current = audioContext;
         analyserRef.current = analyser;
 
+        const NOISE_GATE = 8;
+        const BAR_COUNT = 32;
+
         const updateLevel = () => {
             if (!analyserRef.current) return;
-            analyserRef.current.getByteTimeDomainData(dataArray);
-            let rms = 0;
-            for (let i = 0; i < bufferLength; i++) {
-                const val = (dataArray[i] - 128) / 128;
-                rms += val * val;
+            analyserRef.current.getByteFrequencyData(freqData);
+
+            // Use frequency bins to drive individual bars (gives natural wave shape)
+            const barsPerBin = Math.floor(bufferLength / BAR_COUNT);
+            const newBarLevels = barLevelsRef.current;
+
+            let totalEnergy = 0;
+            for (let bar = 0; bar < BAR_COUNT; bar++) {
+                let sum = 0;
+                const start = bar * barsPerBin;
+                for (let j = start; j < start + barsPerBin; j++) {
+                    sum += freqData[j];
+                }
+                const avg = sum / barsPerBin;
+                // Apply noise gate
+                const gated = avg < NOISE_GATE ? 0 : avg - NOISE_GATE;
+                const normalized = Math.min(100, (gated / (255 - NOISE_GATE)) * 100);
+                // Smooth each bar independently
+                const prev = newBarLevels[bar];
+                newBarLevels[bar] = normalized > prev
+                    ? prev + (normalized - prev) * 0.6
+                    : prev + (normalized - prev) * 0.2;
+                totalEnergy += newBarLevels[bar];
             }
-            rms = Math.sqrt(rms / bufferLength);
-            // Boost sensitivity: sqrt curve makes quiet sounds more visible
-            const boosted = Math.sqrt(rms) * 100;
-            const clamped = Math.min(100, boosted * 3);
-            // Smooth: rise fast, fall slow
-            const prev = smoothedLevelRef.current;
-            const smoothed = clamped > prev ? prev + (clamped - prev) * 0.5 : prev + (clamped - prev) * 0.15;
-            smoothedLevelRef.current = smoothed;
-            setAudioLevel(smoothed);
+            barLevelsRef.current = newBarLevels;
+
+            // Overall level for color
+            const overall = totalEnergy / BAR_COUNT;
+            const prevSmoothed = smoothedLevelRef.current;
+            smoothedLevelRef.current = overall > prevSmoothed
+                ? prevSmoothed + (overall - prevSmoothed) * 0.5
+                : prevSmoothed + (overall - prevSmoothed) * 0.15;
+            setAudioLevel(smoothedLevelRef.current);
             animationFrameRef.current = requestAnimationFrame(updateLevel);
         };
         updateLevel();
@@ -639,17 +661,14 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
                         {/* Audio level */}
                         <div className="mb-10">
                             <div className="flex items-center justify-center gap-[2px] h-20">
-                                {[...Array(32)].map((_, i) => {
-                                    const center = 16;
-                                    const dist = Math.abs(center - i) / center;
-                                    const envelope = 1 - dist * dist;
-                                    const barHeight = 3 + envelope * (audioLevel / 100) * 72;
-                                    const intensity = Math.min(1, audioLevel / 60);
+                                {barLevelsRef.current.map((barLevel, i) => {
+                                    const h = 3 + (barLevel / 100) * 72;
+                                    const intensity = Math.min(1, barLevel / 40);
                                     return (
                                         <div key={i} className="w-[3px] rounded-full"
                                             style={{
-                                                height: `${Math.max(3, barHeight)}px`,
-                                                backgroundColor: `rgba(124, 58, 237, ${0.15 + intensity * 0.85})`,
+                                                height: `${Math.max(3, h)}px`,
+                                                backgroundColor: `rgba(124, 58, 237, ${0.2 + intensity * 0.8})`,
                                             }} />
                                     );
                                 })}
