@@ -139,11 +139,14 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
         return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     };
 
+    const smoothedLevelRef = useRef<number>(0);
+
     const startAudioLevelMonitoring = (stream: MediaStream) => {
         const audioContext = new AudioContext();
         const analyser = audioContext.createAnalyser();
         const microphone = audioContext.createMediaStreamSource(stream);
-        analyser.fftSize = 512;
+        analyser.fftSize = 256;
+        analyser.smoothingTimeConstant = 0.3;
         const bufferLength = analyser.fftSize;
         const dataArray = new Uint8Array(bufferLength);
         microphone.connect(analyser);
@@ -153,13 +156,20 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
         const updateLevel = () => {
             if (!analyserRef.current) return;
             analyserRef.current.getByteTimeDomainData(dataArray);
-            let maxAmplitude = 0;
+            let rms = 0;
             for (let i = 0; i < bufferLength; i++) {
-                const amplitude = Math.abs(dataArray[i] - 128);
-                if (amplitude > maxAmplitude) maxAmplitude = amplitude;
+                const val = (dataArray[i] - 128) / 128;
+                rms += val * val;
             }
-            const level = Math.min(100, (maxAmplitude / 128) * 100);
-            setAudioLevel(level);
+            rms = Math.sqrt(rms / bufferLength);
+            // Boost sensitivity: sqrt curve makes quiet sounds more visible
+            const boosted = Math.sqrt(rms) * 100;
+            const clamped = Math.min(100, boosted * 3);
+            // Smooth: rise fast, fall slow
+            const prev = smoothedLevelRef.current;
+            const smoothed = clamped > prev ? prev + (clamped - prev) * 0.5 : prev + (clamped - prev) * 0.15;
+            smoothedLevelRef.current = smoothed;
+            setAudioLevel(smoothed);
             animationFrameRef.current = requestAnimationFrame(updateLevel);
         };
         updateLevel();
@@ -627,18 +637,19 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
                         </div>
 
                         {/* Audio level */}
-                        <div className="space-y-3 mb-10">
-                            <div className="flex items-center justify-center gap-[3px] h-16">
-                                {[...Array(24)].map((_, i) => {
-                                    const center = 12;
+                        <div className="mb-10">
+                            <div className="flex items-center justify-center gap-[2px] h-20">
+                                {[...Array(32)].map((_, i) => {
+                                    const center = 16;
                                     const dist = Math.abs(center - i) / center;
-                                    const scale = 1 - dist * 0.6;
-                                    const barHeight = 4 + scale * (audioLevel / 100) * 56;
+                                    const envelope = 1 - dist * dist;
+                                    const barHeight = 3 + envelope * (audioLevel / 100) * 72;
+                                    const intensity = Math.min(1, audioLevel / 60);
                                     return (
-                                        <div key={i} className="w-[3px] rounded-full transition-all duration-100"
+                                        <div key={i} className="w-[3px] rounded-full"
                                             style={{
-                                                height: `${Math.max(4, barHeight)}px`,
-                                                backgroundColor: audioLevel > 5 ? '#7c3aed' : '#cbd5e1',
+                                                height: `${Math.max(3, barHeight)}px`,
+                                                backgroundColor: `rgba(124, 58, 237, ${0.15 + intensity * 0.85})`,
                                             }} />
                                     );
                                 })}
