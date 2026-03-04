@@ -622,13 +622,6 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
                             </div>
                         </div>
 
-                        {/* Live transcript */}
-                        {liveTranscript && (
-                            <div className="mb-8 p-4 bg-slate-50 rounded-[12px] border border-slate-200 max-h-32 overflow-y-auto">
-                                <p className="text-[13px] text-slate-500 text-left whitespace-pre-wrap leading-[1.6]">{liveTranscript}</p>
-                            </div>
-                        )}
-
                         {/* Audio level */}
                         <div className="space-y-3 mb-10">
                             <div className="flex items-center justify-center gap-[3px] h-12">
