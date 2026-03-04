@@ -624,13 +624,18 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
 
                         {/* Audio level */}
                         <div className="space-y-3 mb-10">
-                            <div className="flex items-center justify-center gap-[3px] h-12">
-                                {[...Array(20)].map((_, i) => {
-                                    const offset = Math.abs(10 - i) / 10;
-                                    const baseHeight = 3 + (1 - offset) * audioLevel * 0.4;
+                            <div className="flex items-center justify-center gap-[3px] h-16">
+                                {[...Array(24)].map((_, i) => {
+                                    const center = 12;
+                                    const dist = Math.abs(center - i) / center;
+                                    const scale = 1 - dist * 0.6;
+                                    const barHeight = 4 + scale * (audioLevel / 100) * 56;
                                     return (
-                                        <div key={i} className="w-[3px] bg-violet-500 rounded-full transition-all duration-75"
-                                            style={{ height: `${Math.max(3, baseHeight)}px`, opacity: 0.2 + (audioLevel / 100) * 0.8 }} />
+                                        <div key={i} className="w-[3px] rounded-full transition-all duration-100"
+                                            style={{
+                                                height: `${Math.max(4, barHeight)}px`,
+                                                backgroundColor: audioLevel > 5 ? '#7c3aed' : '#cbd5e1',
+                                            }} />
                                     );
                                 })}
                             </div>
