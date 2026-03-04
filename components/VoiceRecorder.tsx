@@ -86,6 +86,7 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
 
     // Web Speech API
     const recognitionRef = useRef<ISpeechRecognition | null>(null);
+    const isRecordingRef = useRef<boolean>(false);
     const [liveTranscript, setLiveTranscript] = useState<string>('');
     const finalTranscriptRef = useRef<string>('');
 
@@ -202,7 +203,7 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
         };
 
         recognition.onend = () => {
-            if (isRecording && recognitionRef.current) {
+            if (isRecordingRef.current && recognitionRef.current) {
                 try { recognitionRef.current.start(); } catch (e) { console.log('Restart failed:', e); }
             }
         };
@@ -230,6 +231,7 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
             }
             finalTranscriptRef.current = '';
             setLiveTranscript('');
+            isRecordingRef.current = true;
             setIsRecording(true);
             setInputMode('recording');
             startTimer();
@@ -241,6 +243,7 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
     };
 
     const stopRecording = async () => {
+        isRecordingRef.current = false;
         setIsRecording(false);
         stopTimer();
         stopAudioLevelMonitoring();
