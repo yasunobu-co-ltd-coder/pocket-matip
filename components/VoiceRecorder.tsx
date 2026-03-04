@@ -143,8 +143,8 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
         const audioContext = new AudioContext();
         const analyser = audioContext.createAnalyser();
         const microphone = audioContext.createMediaStreamSource(stream);
-        analyser.fftSize = 256;
-        const bufferLength = analyser.frequencyBinCount;
+        analyser.fftSize = 512;
+        const bufferLength = analyser.fftSize;
         const dataArray = new Uint8Array(bufferLength);
         microphone.connect(analyser);
         audioContextRef.current = audioContext;
@@ -152,9 +152,13 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
 
         const updateLevel = () => {
             if (!analyserRef.current) return;
-            analyserRef.current.getByteFrequencyData(dataArray);
-            const average = dataArray.reduce((a, b) => a + b, 0) / bufferLength;
-            const level = Math.min(100, (average / 255) * 200);
+            analyserRef.current.getByteTimeDomainData(dataArray);
+            let maxAmplitude = 0;
+            for (let i = 0; i < bufferLength; i++) {
+                const amplitude = Math.abs(dataArray[i] - 128);
+                if (amplitude > maxAmplitude) maxAmplitude = amplitude;
+            }
+            const level = Math.min(100, (maxAmplitude / 128) * 100);
             setAudioLevel(level);
             animationFrameRef.current = requestAnimationFrame(updateLevel);
         };
