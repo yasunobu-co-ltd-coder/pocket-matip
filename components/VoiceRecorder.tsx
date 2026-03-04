@@ -658,20 +658,29 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
                             </div>
                         </div>
 
-                        {/* Audio level */}
+                        {/* Audio level - mirror waveform (center = loudest) */}
                         <div className="mb-10">
                             <div className="flex items-center justify-center gap-[2px] h-20">
-                                {barLevelsRef.current.map((barLevel, i) => {
-                                    const h = 3 + (barLevel / 100) * 72;
-                                    const intensity = Math.min(1, barLevel / 40);
-                                    return (
-                                        <div key={i} className="w-[3px] rounded-full"
-                                            style={{
-                                                height: `${Math.max(3, h)}px`,
-                                                backgroundColor: `rgba(124, 58, 237, ${0.2 + intensity * 0.8})`,
-                                            }} />
-                                    );
-                                })}
+                                {(() => {
+                                    const bars = barLevelsRef.current;
+                                    const half = Math.floor(bars.length / 2);
+                                    // Mirror: left half reversed + right half
+                                    // Center bars use lowest freq bins (most energy), edges use higher freq
+                                    const mirrored: number[] = [];
+                                    for (let i = half - 1; i >= 0; i--) mirrored.push(bars[i]);
+                                    for (let i = 0; i < half; i++) mirrored.push(bars[i]);
+                                    return mirrored.map((barLevel, i) => {
+                                        const h = 3 + (barLevel / 100) * 72;
+                                        const intensity = Math.min(1, barLevel / 40);
+                                        return (
+                                            <div key={i} className="w-[3px] rounded-full"
+                                                style={{
+                                                    height: `${Math.max(3, h)}px`,
+                                                    backgroundColor: `rgba(124, 58, 237, ${0.2 + intensity * 0.8})`,
+                                                }} />
+                                        );
+                                    });
+                                })()}
                             </div>
                         </div>
 
