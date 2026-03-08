@@ -12,25 +12,51 @@ export async function GET(
   }
 
   try {
-    const queries = [
-      supabaseAdmin.from('pocket-matip').select('*', { count: 'exact', head: true }).eq('user_id', userId),
-      supabaseAdmin.from('matip-memo').select('*', { count: 'exact', head: true }).eq('created_by', userId),
-      supabaseAdmin.from('matip-memo').select('*', { count: 'exact', head: true }).eq('assignee', userId),
-      supabaseAdmin.from('matip-memo-unread').select('*', { count: 'exact', head: true }).eq('user_id', userId),
-      supabaseAdmin.from('push_subscriptions').select('*', { count: 'exact', head: true }).eq('user_id', userId),
-      supabaseAdmin.from('notification_logs').select('*', { count: 'exact', head: true }).eq('triggered_by_user_id', userId),
-    ];
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!serviceKey) {
+      console.error('SUPABASE_SERVICE_ROLE_KEY is not set!');
+      return NextResponse.json(
+        { error: 'サーバー設定エラー: SUPABASE_SERVICE_ROLE_KEY が未設定です' },
+        { status: 500 }
+      );
+    }
 
-    const results = await Promise.all(queries);
+    const queryDefs = [
+      { key: 'pocket_matip', table: 'pocket-matip', col: 'user_id' },
+      { key: 'memo_created', table: 'matip-memo', col: 'created_by' },
+      { key: 'memo_assigned', table: 'matip-memo', col: 'assignee' },
+      { key: 'memo_unread', table: 'matip-memo-unread', col: 'user_id' },
+      { key: 'push_subs', table: 'push_subscriptions', col: 'user_id' },
+      { key: 'notif_triggered', table: 'notification_logs', col: 'triggered_by_user_id' },
+    ] as const;
 
-    const counts = {
-      pocket_matip: results[0].count ?? 0,
-      memo_created: results[1].count ?? 0,
-      memo_assigned: results[2].count ?? 0,
-      memo_unread: results[3].count ?? 0,
-      push_subs: results[4].count ?? 0,
-      notif_triggered: results[5].count ?? 0,
-    };
+    const results = await Promise.all(
+      queryDefs.map(q =>
+        supabaseAdmin.from(q.table).select('*', { count: 'exact', head: true }).eq(q.col, userId)
+      )
+    );
+
+    // Check for query errors — don't silently return 0
+    const errors: string[] = [];
+    const counts: Record<string, number> = {};
+    for (let i = 0; i < queryDefs.length; i++) {
+      const { key, table } = queryDefs[i];
+      const r = results[i];
+      if (r.error) {
+        console.error(`Query error for ${table}:`, r.error.message);
+        errors.push(`${table}: ${r.error.message}`);
+        counts[key] = 0;
+      } else {
+        counts[key] = r.count ?? 0;
+      }
+    }
+
+    if (errors.length > 0) {
+      return NextResponse.json(
+        { error: `一部テーブルの参照チェックに失敗しました: ${errors.join(', ')}`, counts, userId },
+        { status: 500 }
+      );
+    }
 
     const canDelete = Object.values(counts).every(c => c === 0);
 
