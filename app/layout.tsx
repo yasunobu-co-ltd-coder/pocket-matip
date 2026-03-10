@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import { ServiceWorkerRegistration } from './components/ServiceWorkerRegistration';
 
 export const metadata: Metadata = {
   title: 'Pocket Matip',
@@ -34,7 +35,10 @@ export default function RootLayout({
         />
         <link rel="apple-touch-icon" href="/favicon.png" />
       </head>
-      <body className="max-w-[600px] mx-auto min-h-screen relative">{children}</body>
+      <body className="max-w-[600px] mx-auto min-h-screen relative">
+        <ServiceWorkerRegistration />
+        {children}
+      </body>
     </html>
   );
 }
