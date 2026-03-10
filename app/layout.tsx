@@ -6,6 +6,20 @@ export const metadata: Metadata = {
   title: 'Pocket Matip',
   description: '音声から議事録を自動生成',
   manifest: '/manifest.json',
+  openGraph: {
+    title: 'Pocket Matip',
+    description: '音声から議事録を自動生成',
+    siteName: 'Pocket Matip',
+    images: [{ url: '/favicon.png', width: 512, height: 512, alt: 'Pocket Matip' }],
+    locale: 'ja_JP',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Pocket Matip',
+    description: '音声から議事録を自動生成',
+    images: ['/favicon.png'],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
