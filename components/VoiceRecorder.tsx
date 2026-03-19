@@ -169,7 +169,6 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
             if (!analyserRef.current) return;
             analyserRef.current.getByteFrequencyData(freqData);
 
-            // Use frequency bins to drive individual bars (gives natural wave shape)
             const barsPerBin = Math.floor(bufferLength / BAR_COUNT);
             const newBarLevels = barLevelsRef.current;
 
@@ -181,10 +180,8 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
                     sum += freqData[j];
                 }
                 const avg = sum / barsPerBin;
-                // Apply noise gate
                 const gated = avg < NOISE_GATE ? 0 : avg - NOISE_GATE;
                 const normalized = Math.min(100, (gated / (255 - NOISE_GATE)) * 100);
-                // Smooth each bar independently
                 const prev = newBarLevels[bar];
                 newBarLevels[bar] = normalized > prev
                     ? prev + (normalized - prev) * 0.6
@@ -193,7 +190,6 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
             }
             barLevelsRef.current = newBarLevels;
 
-            // Overall level for color
             const overall = totalEnergy / BAR_COUNT;
             const prevSmoothed = smoothedLevelRef.current;
             smoothedLevelRef.current = overall > prevSmoothed
@@ -533,9 +529,14 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
         }
     };
 
-    // pocket-matip テーブルに保存
+    // pocket-yasunobu テーブルに保存
     const saveMinutes = async () => {
         if (!result) return;
+        const meetingName = (customer || result.customer || '').trim();
+        if (!meetingName) {
+            alert('会議名を入力してください');
+            return;
+        }
 
         try {
             let formattedMemo = result.summary;
@@ -553,7 +554,7 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
                 .from('pocket-matip')
                 .insert({
                     user_id: userId,
-                    client_name: customer || result.customer || '名称なし',
+                    client_name: meetingName,
                     transcript: editableTranscript,
                     summary: formattedMemo,
                     decisions: result.decisions || [],
@@ -810,8 +811,6 @@ export default function VoiceRecorder({ userId, userName, onSaved, onCancel }: V
                                 {(() => {
                                     const bars = barLevelsRef.current;
                                     const half = Math.floor(bars.length / 2);
-                                    // Mirror: left half reversed + right half
-                                    // Center bars use lowest freq bins (most energy), edges use higher freq
                                     const mirrored: number[] = [];
                                     for (let i = half - 1; i >= 0; i--) mirrored.push(bars[i]);
                                     for (let i = 0; i < half; i++) mirrored.push(bars[i]);
