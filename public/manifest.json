@@ -1,6 +1,6 @@
 {
-  "name": "Pocket Matip",
-  "short_name": "Pocket Matip",
+  "name": "pocket-matip",
+  "short_name": "pocket-matip",
   "description": "AI議事録アシスタント",
   "start_url": "/",
   "display": "standalone",
