@@ -51,13 +51,11 @@ export default function Page() {
   const handleUserSelect = (user: UserData) => setCurrentUser(user);
 
   const closeHomeModal = () => {
-    if (isAudioPlaying && selectedHomeRecord) {
-      // 再生中 → モーダルを非表示にするだけ（TTSPlayerは生かす）
-      setIsModalVisible(false);
-    } else {
-      setSelectedHomeRecord(null);
-      setIsModalVisible(true);
-    }
+    // モーダルを閉じたら必ず再生停止
+    ttsRef.current?.stop();
+    setIsAudioPlaying(false);
+    setSelectedHomeRecord(null);
+    setIsModalVisible(true);
   };
 
   const openHomeRecord = (record: MinutesRecord) => {
